@@ -71,3 +71,11 @@ Article note: the checklist is the part of this project a second device should b
 **Conclusion:** The Market now lists six devices. The app builds for the iOS simulator and opens on the empty Home tab; `swift test` passes (13 HubCore, 1 catalog). HomeDeck has no working device yet; the first comes from wave 1.
 **Next:** The first wave-1 device session.
 Article note: at the first real test the hub decided that a working app doesn't need to move: the shell earns its place with devices that have no good app yet, not by absorbing one that already works.
+
+## 2026-11-13: HomeDeck on the iPhone
+
+**Tried:** Installed the REX5-free build on `<phone>` over a USB cable (the first attempt failed: the cable carried no data, so the phone showed as unavailable). The owner checked the app by hand; the simulator walk-through covered the rest.
+**Device answered:** Market lists six devices, each at "0 of N features working". Add opens the device's "isn't built yet" screen on Home; the Home card reads "Not set up"; long-press, Remove from Home takes it off. Settings, Connection log opens and its device filter lists the six devices. The "Send wishlist" button never appeared: it sat in a bottom toolbar, and iOS hides bottom toolbars in a tab-bar app. The Want choice itself was saved.
+**Conclusion:** Moved "Send wishlist" into the feature list as its own row; it shows as soon as one feature is wanted (verified in the simulator). Phase 0 works on the phone, with no device module yet.
+**Next:** The owner's yes for creating `main`, the public repo and the first push; then the wave-1 prep step before device sessions start.
+Article note: the first real test changed the plan twice in ten minutes: the earbuds stayed in their own app, and a button the code review called fine turned out to be invisible.

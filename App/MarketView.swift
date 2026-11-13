@@ -58,6 +58,10 @@ struct FeatureListView: View {
             }
             section("Planned", footer: "Switch on to ask for it in the wishlist.", features(.planned), want)
             section("Not planned", footer: "Switch on if you want it after all.", features(.notPlanned), want)
+            // In the list, not a bottom toolbar: iOS hides bottom toolbars when there is a tab bar.
+            if let text = choices.wishlist(for: kind) {
+                Section { ShareLink("Send wishlist", item: text) }
+            }
         }
         .navigationTitle(kind.name)
         .toolbar {
@@ -69,11 +73,6 @@ struct FeatureListView: View {
                         store.add(kind)
                         openDevice(kind)
                     }
-                }
-            }
-            ToolbarItem(placement: .bottomBar) {
-                if let text = choices.wishlist(for: kind) {
-                    ShareLink("Send wishlist", item: text)
                 }
             }
         }
