@@ -4,7 +4,8 @@
 Patterns come from Config/private-patterns.txt (git-ignored): one literal per line, '#' starts a comment.
 Each literal is searched case-insensitively as text, as hex (with and without spaces) and as base64;
 a literal of 3 or more hex bytes (A1:B2:C3) is also searched in every common byte format, reversed too,
-in every file being pushed (binary files too, so image metadata is covered) and in commit messages.
+in every file being pushed (binary files too) and in commit messages. Photo files (JPEG, HEIC, TIFF) are
+refused outright: their GPS metadata is binary, so a text search cannot see it.
 
   privacy-scan.py              scan tracked and new, not ignored, files in the working tree
   privacy-scan.py --pre-push   scan the commits git is about to push (stdin of the pre-push hook)
@@ -55,7 +56,7 @@ def hex_byte_needles(literal, label):
                      ", ".join("0x" + b for b in ordered)):
             found[text.encode()] = f"{label} (hex bytes)"
         if len(ordered) >= 6:  # 3-byte raw sequences would match random data in binaries
-            found[bytes.fromhex("".join(ordered))] = f"{label} (hex bytes)"
+            found[bytes.fromhex("".join(ordered)).lower()] = f"{label} (hex bytes)"  # data is lowercased too
     return found
 
 
@@ -130,9 +131,15 @@ def pushed_blobs(lines):
                     yield f"{path} in {commit[:8]}", git("cat-file", "blob", new_sha)
 
 
+# Photos carry GPS and camera metadata that a text search can't see; the repo takes PNG app screenshots only.
+PHOTO_TYPES = (".jpg", ".jpeg", ".heic", ".heif", ".tif", ".tiff", ".dng")
+
+
 def scan(blobs, table):
     hits = set()
     for name, data in blobs:
+        if name.split(" in ")[0].lower().endswith(PHOTO_TYPES):
+            hits.add(f"{name}: photo file (may hold GPS location); use a PNG app screenshot")
         lowered = data.lower()
         for needle, what in table.items():
             if needle in lowered:
@@ -159,6 +166,9 @@ def self_test():
         assert any(needle in sample.lower() for needle in hexed), sample
     assert raw6 in hexed
     assert bytes.fromhex("A1B2C3") not in needles("A1:B2:C3")
+    upper = bytes.fromhex("4A4B4C4D4E4F")  # raw bytes that bytes.lower() changes
+    assert any(needle in (b"\x00" + upper).lower() for needle in needles("4A:4B:4C:4D:4E:4F"))
+    assert scan([("IMG_0001.HEIC in 1234abcd", b"")], {}) and not scan([("shot.png", b"")], {})
     print("privacy-scan self-test passed")
 
 
