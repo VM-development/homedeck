@@ -1,0 +1,11 @@
+build/
+.build/
+.swiftpm/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+.DS_Store
+.superpowers/
+research/
+Config/Team.xcconfig
+Config/private-patterns.txt
