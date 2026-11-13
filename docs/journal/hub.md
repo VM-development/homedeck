@@ -23,3 +23,11 @@ Article note: the privacy guard came before the first line of app code, because 
 **Device answered:** n/a.
 **Conclusion:** The full HubCore suite passes under `swift test` (10 tests: 4 catalog, 6 new) with no warnings in the build output. Built on macOS 27 only; the iOS 17 target is not built here.
 **Next:** The shell: Home and Market screens that use these stores.
+
+## 2026-11-13: Shared connection log
+
+**Tried:** Ported the REX5 connection log into HubCore as ConnectionLog, now tagged by device id (entries carry a device; DeviceLogger keeps the `log.add("...")` call shape per device; filter and Share text can be scoped to one device), test-first.
+**Device answered:** n/a.
+**Conclusion:** The full HubCore suite passes under `swift test` (13 tests: 4 catalog, 3 store, 3 choices, 3 log) and the log survives relaunch with its 500-entry cap. Built on macOS 27 only; the iOS 17 target is not built here.
+**Next:** The shell: Home and Market screens that use these stores and the log.
+Article note: one log for six devices works best when every line says which device wrote it, so the Share button can export one device or all of them.
