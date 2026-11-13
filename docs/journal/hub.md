@@ -16,3 +16,10 @@ Article note: the privacy guard came before the first line of app code, because 
 **Device answered:** n/a.
 **Conclusion:** 4 catalog tests pass under `swift test` on a clean build with no warnings (built on macOS 27 only; the iOS 17 target is not built here).
 **Next:** The device choices and the store.
+
+## 2026-11-13: Feature choices and device store
+
+**Tried:** Added FeatureChoices (per-device Show and Want ticks in UserDefaults, plus the wishlist text), DeviceStore (added kinds that survive relaunch, one device instance per kind created at launch) and the `.feature(_:)` view modifier with a `deviceID` environment key, test-first.
+**Device answered:** n/a.
+**Conclusion:** The full HubCore suite passes under `swift test` (10 tests: 4 catalog, 6 new) with no warnings in the build output. Built on macOS 27 only; the iOS 17 target is not built here.
+**Next:** The shell: Home and Market screens that use these stores.
