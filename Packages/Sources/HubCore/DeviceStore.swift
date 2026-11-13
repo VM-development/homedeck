@@ -31,7 +31,7 @@ public final class DeviceStore {
         defaults.set(addedIDs, forKey: Self.key)
     }
 
-    /// Takes the card off Home. It doesn't disconnect: for REX5 that would drop the iPhone's audio.
+    /// Takes the card off Home. It doesn't disconnect: the device may be in use.
     public func remove(_ kind: DeviceKind) {
         addedIDs.removeAll { $0 == kind.id }
         defaults.set(addedIDs, forKey: Self.key)

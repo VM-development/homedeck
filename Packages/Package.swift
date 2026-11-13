@@ -3,7 +3,7 @@ import PackageDescription
 
 // One package with one target per device, so adding a device never edits the Xcode project.
 // A device session adds its `<Name>KitTests` test target when it writes protocol code.
-let kits = ["Rex5Kit", "WalkingPadKit", "MiScaleKit", "PhilipsAirKit", "ZeppelinKit", "XiaomiFanKit", "DreameKit"]
+let kits = ["WalkingPadKit", "MiScaleKit", "PhilipsAirKit", "ZeppelinKit", "XiaomiFanKit", "DreameKit"]
 
 let package = Package(
     name: "HomeDeckKits",
@@ -12,7 +12,6 @@ let package = Package(
     targets: [
         .target(name: "HubCore"),
         .testTarget(name: "HubCoreTests", dependencies: ["HubCore"]),
-        .testTarget(name: "Rex5KitTests", dependencies: ["Rex5Kit"]),
         .testTarget(name: "CatalogTests", dependencies: ["HubCore"] + kits.map { Target.Dependency.byName(name: $0) }),
     ] + kits.map { Target.target(name: $0, resources: [.process("features.json")]) }
 )

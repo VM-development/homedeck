@@ -8,7 +8,6 @@ It isn't affiliated with any of the device makers.
 
 | Device | Link | Status |
 |---|---|---|
-| Noble FoKus Rex5 earbuds | Bluetooth | Working |
 | WalkingPad C2 | Bluetooth | Planned |
 | Mi Body Composition Scale S400 | Bluetooth | Planned |
 | Philips 2000i AC2729 | Wi-Fi | Planned |
@@ -16,7 +15,7 @@ It isn't affiliated with any of the device makers.
 | Xiaomi Smart Standing Fan 2 Pro | Wi-Fi | Planned |
 | Dreame L40 Ultra | Wi-Fi | Planned |
 
-The app's Market tab shows every feature of every device and whether it works yet.
+The app's Market tab shows every feature of every device and whether it works yet. The Noble FoKus Rex5 earbuds keep their own [REX5 app](https://github.com/VM-development/noble-rex5-custom-app).
 
 ## How it's built
 

@@ -63,3 +63,11 @@ Article note: the wishlist is a share sheet, not a backend: the user picks the f
 **Conclusion:** Docs only, so no test run applies here. The checklist names the files a device session may change, which keeps parallel device sessions out of each other's code. Evidence labels are not needed for docs.
 **Next:** Run the privacy scan and the hook setup on a fresh clone, then start the first wave-1 device session from the checklist.
 Article note: the checklist is the part of this project a second device should be able to follow without asking questions, so it was written before any second device.
+
+## 2026-11-13: REX5 stays a separate app
+
+**Tried:** The owner tried the HomeDeck build on the phone and decided the earbuds keep their own standalone app. Removed everything Tasks 5 and 6 brought in for REX5: the device folder App/Devices/Rex5/, the Rex5Kit package target and its tests, the widget extension (HomeDeck's only widgets were REX5's) with its Widgets/ folder and its Xcode target, Shared/ (the battery ring only REX5 used), the registry line, and the app entry's notification delegate and link routing. The `rex5://` URL scheme left Info.plist too: the standalone app owns it, and two apps claiming one scheme make iOS pick either. Bluetooth permission and the `bluetooth-central` background mode stay for the WalkingPad and the scale.
+**Device answered:** n/a.
+**Conclusion:** The Market now lists six devices. The app builds for the iOS simulator and opens on the empty Home tab; `swift test` passes (13 HubCore, 1 catalog). HomeDeck has no working device yet; the first comes from wave 1.
+**Next:** The first wave-1 device session.
+Article note: at the first real test the hub decided that a working app doesn't need to move: the shell earns its place with devices that have no good app yet, not by absorbing one that already works.

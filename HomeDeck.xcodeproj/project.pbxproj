@@ -7,40 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0C2EF2522EA720AD87E0777F /* HomeDeckKits in Frameworks */ = {isa = PBXBuildFile; productRef = 8B7070815A55AA6A33285655 /* HomeDeckKits */; };
-		3A7108446A996D494184C13D /* HomeDeckWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CAC4985B335F496F1AA10FFF /* HomeDeckWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		AA073CBB023E55C8811EFEBB /* HomeDeckKits in Frameworks */ = {isa = PBXBuildFile; productRef = 627CF33B120E29714BFC8D5D /* HomeDeckKits */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		2435C16EFF3907C585B510AA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BB38E83161135C2B227D6308 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = ADCC51E1329BE282BF755A12;
-			remoteInfo = HomeDeckWidgets;
-		};
-/* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		CB6AFE67C7A300269792CADE /* Embed Foundation Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				3A7108446A996D494184C13D /* HomeDeckWidgets.appex in Embed Foundation Extensions */,
-			);
-			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06F53F18BE5B32A21DE4578A /* HomeDeck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HomeDeck.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08E2D7DF7DDB7A9AB1D1DAD3 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
 		13221A0F9E9E002E85C6D107 /* HomeDeckKits */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Packages; sourceTree = SOURCE_ROOT; };
-		CAC4985B335F496F1AA10FFF /* HomeDeckWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HomeDeckWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -50,13 +25,6 @@
 				Info.plist,
 			);
 			target = A619DF68590FAE7670734999 /* HomeDeck */;
-		};
-		5C76C5FF97859F077275CC8B /* Exceptions for "Widgets" folder in "HomeDeckWidgets" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = ADCC51E1329BE282BF755A12 /* HomeDeckWidgets */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -69,30 +37,9 @@
 			path = App;
 			sourceTree = "<group>";
 		};
-		F34A81D0FEE3ED0934B50F6E /* Widgets */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				5C76C5FF97859F077275CC8B /* Exceptions for "Widgets" folder in "HomeDeckWidgets" target */,
-			);
-			path = Widgets;
-			sourceTree = "<group>";
-		};
-		FC139A182D6CBF553EEA03B7 /* Shared */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Shared;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		5C1FF8A7CFE455D333C124B3 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0C2EF2522EA720AD87E0777F /* HomeDeckKits in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6709367A3240E8F1F03D0BD7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -110,8 +57,6 @@
 				8CAD01B9D7C5DDFA4452A8F3 /* App */,
 				858FA2347017FF513B83D1DC /* Config */,
 				E58F08C5B5AC05DF962BC8B3 /* Packages */,
-				FC139A182D6CBF553EEA03B7 /* Shared */,
-				F34A81D0FEE3ED0934B50F6E /* Widgets */,
 				C0862085B61ECC15678165BE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -128,7 +73,6 @@
 			isa = PBXGroup;
 			children = (
 				06F53F18BE5B32A21DE4578A /* HomeDeck.app */,
-				CAC4985B335F496F1AA10FFF /* HomeDeckWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -151,16 +95,13 @@
 				A17D93C38B678C675F4FEA7B /* Sources */,
 				E1FDB1E217946CBB243AA674 /* Resources */,
 				6709367A3240E8F1F03D0BD7 /* Frameworks */,
-				CB6AFE67C7A300269792CADE /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				F497C6A10EE355B438E8F7C9 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				8CAD01B9D7C5DDFA4452A8F3 /* App */,
-				FC139A182D6CBF553EEA03B7 /* Shared */,
 			);
 			name = HomeDeck;
 			packageProductDependencies = (
@@ -169,30 +110,6 @@
 			productName = HomeDeck;
 			productReference = 06F53F18BE5B32A21DE4578A /* HomeDeck.app */;
 			productType = "com.apple.product-type.application";
-		};
-		ADCC51E1329BE282BF755A12 /* HomeDeckWidgets */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6F7CFE0803B92B2FA32FB584 /* Build configuration list for PBXNativeTarget "HomeDeckWidgets" */;
-			buildPhases = (
-				04DA1524B7DEF365DCEEB0B0 /* Sources */,
-				901CBF54844550AC222EBE3F /* Resources */,
-				5C1FF8A7CFE455D333C124B3 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				F34A81D0FEE3ED0934B50F6E /* Widgets */,
-				FC139A182D6CBF553EEA03B7 /* Shared */,
-			);
-			name = HomeDeckWidgets;
-			packageProductDependencies = (
-				8B7070815A55AA6A33285655 /* HomeDeckKits */,
-			);
-			productName = HomeDeckWidgets;
-			productReference = CAC4985B335F496F1AA10FFF /* HomeDeckWidgets.appex */;
-			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -204,9 +121,6 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					A619DF68590FAE7670734999 = {
-						ProvisioningStyle = Automatic;
-					};
-					ADCC51E1329BE282BF755A12 = {
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -229,19 +143,11 @@
 			projectRoot = "";
 			targets = (
 				A619DF68590FAE7670734999 /* HomeDeck */,
-				ADCC51E1329BE282BF755A12 /* HomeDeckWidgets */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		901CBF54844550AC222EBE3F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		E1FDB1E217946CBB243AA674 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -252,13 +158,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		04DA1524B7DEF365DCEEB0B0 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		A17D93C38B678C675F4FEA7B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -268,13 +167,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		F497C6A10EE355B438E8F7C9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = ADCC51E1329BE282BF755A12 /* HomeDeckWidgets */;
-			targetProxy = 2435C16EFF3907C585B510AA /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		2AAFFF6B54D8E75E153A25E2 /* Debug */ = {
@@ -289,22 +181,6 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = local.homedeck.app;
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		33F0F40B5B67C267D989D506 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = Widgets/HomeDeckWidgets.entitlements;
-				INFOPLIST_FILE = Widgets/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = local.homedeck.app.widgets;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -452,22 +328,6 @@
 			};
 			name = Release;
 		};
-		AADFFE306FA8F05EDB2DF8B7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = Widgets/HomeDeckWidgets.entitlements;
-				INFOPLIST_FILE = Widgets/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = local.homedeck.app.widgets;
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -489,15 +349,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		6F7CFE0803B92B2FA32FB584 /* Build configuration list for PBXNativeTarget "HomeDeckWidgets" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				33F0F40B5B67C267D989D506 /* Debug */,
-				AADFFE306FA8F05EDB2DF8B7 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
@@ -509,10 +360,6 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		627CF33B120E29714BFC8D5D /* HomeDeckKits */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = HomeDeckKits;
-		};
-		8B7070815A55AA6A33285655 /* HomeDeckKits */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = HomeDeckKits;
 		};

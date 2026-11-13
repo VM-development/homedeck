@@ -1,5 +1,4 @@
 import HubCore
-import Rex5Kit
 import WalkingPadKit
 import MiScaleKit
 import PhilipsAirKit
@@ -10,8 +9,6 @@ import DreameKit
 /// Every device HomeDeck knows. A device session replaces its UnbuiltDevice with its own class.
 enum DeviceRegistry {
     static let kinds: [DeviceKind] = [
-        DeviceKind(id: "rex5", name: "Noble FoKus Rex5", symbol: "earbuds", link: .bluetooth,
-                   featuresURL: Rex5Catalog.featuresURL) { Rex5Device.shared },
         DeviceKind(id: "walkingpad-c2", name: "WalkingPad C2", symbol: "figure.walk", link: .bluetooth,
                    featuresURL: WalkingPadCatalog.featuresURL) { UnbuiltDevice(name: "WalkingPad C2") },
         DeviceKind(id: "mi-scale-s400", name: "Mi Body Composition Scale S400", symbol: "scalemass", link: .bluetooth,

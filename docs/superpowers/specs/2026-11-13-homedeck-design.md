@@ -17,6 +17,7 @@ HomeDeck is a single iPhone app that controls all of the owner's Bluetooth and W
 | Platform | iPhone only, iOS 26 minimum (Liquid Glass), SwiftUI, Xcode 27. |
 | Design | Same as REX5: plain `systemGroupedBackground`, `.clear` glass, no decorative gradients. |
 | Devices of the same kind | One of each. Adding a second device of a kind is out of scope. |
+| REX5 | Stays a separate app; HomeDeck has no REX5 module (owner decision during the Phase 0 phone test, 2026-11-13). |
 
 ## Devices
 
@@ -24,7 +25,6 @@ All expectations below are unverified. Checking them is step 2 of each device's 
 
 | Device | Link | Vendor app (iOS) | Expectation, unverified | Wave |
 |---|---|---|---|---|
-| Noble FoKus Rex5 earbuds | Bluetooth | none (REX5) | Done; GAIA over BLE, documented in the REX5 repo | Phase 0 |
 | KingSmith WalkingPad C2 | Bluetooth | KS Fit | Open-source projects (for example `ph4-walkingpad`) describe its BLE protocol | 1 |
 | Philips 2000i Series AC2729/13 | Wi-Fi | Philips Air+ | Local encrypted CoAP protocol, implemented by open-source Home Assistant integrations | 1 |
 | Bowers & Wilkins Zeppelin Pro Edition | Wi-Fi | B&W Music | Playback and volume through AirPlay; app-only settings (EQ, light) use an unknown protocol | 1 |
@@ -44,12 +44,11 @@ homedeck/
   App/                          SwiftUI shell
     DeviceRegistry.swift        one line per device kind
     Devices/<Name>/             the device's screens and its HomeDevice class
-  Widgets/                      one widget extension; REX5's widgets at first
+  Widgets/                      no widget extension until a device needs one
   App/UI/Glass.swift            glass components from REX5 (iOS 26 APIs)
   Packages/                     one Swift package, product HomeDeckKits
     Package.swift               one target per device, so adding a device never edits the Xcode project
     Sources/HubCore/            contract, log, feature choices, the .feature() modifier
-    Sources/Rex5Kit/            copied from the REX5 repo
     Sources/<Device>Kit/        one per device: protocol code and features.json
     Sources/XiaomiCloudKit/     Xiaomi sign-in, key fetch and Keychain storage (wave 1)
     Tests/<Target>Tests/        tests per target
@@ -83,8 +82,8 @@ public enum Link: String, Codable, Sendable { case bluetooth, wifi }
 
 public struct Feature: Codable, Identifiable, Sendable {
     public enum Status: String, Codable, Sendable { case working, planned, notPlanned }
-    public let id: String          // "noise-control"
-    public let title: String       // "Noise control: off, ANC, ambient"
+    public let id: String          // "speed"
+    public let title: String       // "Set the speed"
     public let status: Status
 }
 
@@ -92,12 +91,12 @@ public enum DeviceStatus: Equatable, Sendable {
     case notSetUp
     case offline(reason: String?)
     case connecting
-    case online(summary: String)   // "L 80% · R 75%"
+    case online(summary: String)   // "Walking, 3.5 km/h"
 }
 
 public struct DeviceKind {
-    public let id: String          // "rex5"
-    public let name: String        // "Noble FoKus Rex5"
+    public let id: String          // "walkingpad-c2"
+    public let name: String        // "WalkingPad C2"
     public let symbol: String      // SF Symbol name
     public let link: Link
     public let features: [Feature] // decoded from the package's features.json
@@ -116,7 +115,7 @@ public struct DeviceKind {
 
 ```json
 [
-  { "id": "battery", "title": "Battery for each earbud", "status": "working" },
+  { "id": "speed", "title": "Set the speed", "status": "working" },
   { "id": "firmware-update", "title": "Firmware update", "status": "notPlanned" }
 ]
 ```
@@ -130,7 +129,7 @@ public struct DeviceKind {
   - **Planned** and **Not planned** features have a Want toggle.
   - **Send wishlist** opens the share sheet with a plain-text list, "HomeDeck wishlist for <name>:" followed by one "- <title> (<id>)" line per wanted feature. The owner pastes it into that device's session.
 - Show and Want choices are stored on the phone in `UserDefaults` by HubCore's `FeatureChoices`. What exists and what works is stored only in the repo's `features.json`.
-- Long-pressing a Home card offers Remove from Home, which takes it off the added list without disconnecting (for REX5, disconnecting would drop the iPhone's audio). Once Keychain storage exists, removal also deletes the device's Keychain items.
+- Long-pressing a Home card offers Remove from Home, which takes it off the added list without disconnecting, because the device may be in use. Once Keychain storage exists, removal also deletes the device's Keychain items.
 
 ## Shell app
 
@@ -142,13 +141,9 @@ public struct DeviceKind {
 | Market | Catalog and feature lists, as above. |
 | Settings | Accounts (Xiaomi sign-in), the shared log with a per-device filter, About. |
 
-### REX5 as module one
+### REX5
 
-- `Rex5Kit` moves to `Packages/Rex5Kit` with its tests.
-- The REX5 app code (`EarbudLink`, `EarbudService`, `ConnectionLog` use, screens, `RefreshEarbudsIntent`) moves to `App/Devices/Rex5/`, adapted to `HomeDevice`.
-- Its widgets move to `Widgets/`: small, medium, Lock Screen status line, and the two Lock Screen battery circles. The widget names stay literal strings (a runtime-built name crashed the REX5 widget extension on 2026-11-12).
-- Its background behaviour stays: Battery Service notifications while connected, and the "Refresh REX5" App Intent for the Shortcuts automation.
-- Once HomeDeck's REX5 module works on the phone, the owner deletes the standalone REX5 app, because two apps connecting to the earbuds would reintroduce the audio-first problem.
+REX5 stays a separate app and HomeDeck has no REX5 module; see the REX5 row under Decisions.
 
 ### Shared pieces
 
@@ -157,7 +152,7 @@ public struct DeviceKind {
 
 ### Permissions
 
-Bluetooth (REX5, WalkingPad, scale), Local Network with the Bonjour service types each Wi-Fi module needs (fan, Philips, Zeppelin), and the `bluetooth-central` background mode.
+Bluetooth (WalkingPad, scale), Local Network with the Bonjour service types each Wi-Fi module needs (fan, Philips, Zeppelin), and the `bluetooth-central` background mode.
 
 ### Failure handling
 
@@ -201,12 +196,12 @@ Dated entries, only ever appended: what was tried and why; what the device answe
 
 ### Phase 0: the shell (one session)
 
-Builds the repo, HubCore, the market, the REX5 migration, the templates, `adding-a-device.md`, the privacy scan and hook, and a starting `features.json` for each of the six new devices. A starting list contains the features expected from each vendor app, all `planned`; the device session replaces it with a real inventory.
+Builds the repo, HubCore, the market, the templates, `adding-a-device.md`, the privacy scan and hook, and a starting `features.json` for each of the six devices. A starting list contains the features expected from each vendor app, all `planned`; the device session replaces it with a real inventory.
 
 Done when:
-- HomeDeck runs on the owner's iPhone and its REX5 module shows battery, switches ANC, applies the EQ, and updates the widgets;
-- the Market lists all seven devices;
-- `swift test` passes for HubCore and Rex5Kit;
+- HomeDeck runs on the owner's iPhone;
+- the Market lists all six devices;
+- `swift test` passes for HubCore and the catalogs;
 - the pre-push hook blocks a push containing a test pattern;
 - the public GitHub repo exists (created only after the owner's yes).
 
