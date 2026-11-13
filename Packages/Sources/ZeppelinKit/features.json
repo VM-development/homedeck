@@ -1,0 +1,9 @@
+[
+  { "id": "playback", "title": "Play, pause and skip", "status": "planned" },
+  { "id": "volume", "title": "Volume", "status": "planned" },
+  { "id": "now-playing", "title": "Now playing and source", "status": "planned" },
+  { "id": "eq", "title": "Bass and treble", "status": "planned" },
+  { "id": "light", "title": "Ambient light brightness", "status": "planned" },
+  { "id": "power-settings", "title": "Standby and auto-wake settings", "status": "planned" },
+  { "id": "firmware-update", "title": "Firmware update", "status": "planned" }
+]

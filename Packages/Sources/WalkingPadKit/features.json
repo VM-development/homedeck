@@ -1,0 +1,7 @@
+[
+  { "id": "start-stop", "title": "Start and stop the belt", "status": "planned" },
+  { "id": "speed", "title": "Set the speed", "status": "planned" },
+  { "id": "mode", "title": "Mode: manual, automatic, standby", "status": "planned" },
+  { "id": "live-stats", "title": "Live speed, distance, steps and time", "status": "planned" },
+  { "id": "history", "title": "Workout history", "status": "planned" }
+]

@@ -1,0 +1,14 @@
+[
+  { "id": "power", "title": "Power on and off", "status": "planned" },
+  { "id": "mode", "title": "Mode: auto, sleep, allergen, manual", "status": "planned" },
+  { "id": "fan-speed", "title": "Fan speed", "status": "planned" },
+  { "id": "humidifier", "title": "Purify only, or purify and humidify", "status": "planned" },
+  { "id": "humidity-target", "title": "Target humidity", "status": "planned" },
+  { "id": "air-quality", "title": "Air quality and PM2.5 readings", "status": "planned" },
+  { "id": "humidity-reading", "title": "Humidity and temperature readings", "status": "planned" },
+  { "id": "filter-status", "title": "Filter status", "status": "planned" },
+  { "id": "water-level", "title": "Water level", "status": "planned" },
+  { "id": "timer", "title": "Timer", "status": "planned" },
+  { "id": "light", "title": "Display brightness", "status": "planned" },
+  { "id": "child-lock", "title": "Child lock", "status": "planned" }
+]

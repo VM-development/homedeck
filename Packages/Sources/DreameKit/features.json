@@ -1,0 +1,13 @@
+[
+  { "id": "status", "title": "Status and battery", "status": "planned" },
+  { "id": "start-pause-dock", "title": "Start, pause and return to dock", "status": "planned" },
+  { "id": "clean-mode", "title": "Cleaning mode: vacuum, mop, both", "status": "planned" },
+  { "id": "suction", "title": "Suction level", "status": "planned" },
+  { "id": "water-level", "title": "Mop water level", "status": "planned" },
+  { "id": "rooms", "title": "Clean selected rooms", "status": "planned" },
+  { "id": "map", "title": "Map", "status": "planned" },
+  { "id": "schedule", "title": "Schedules", "status": "planned" },
+  { "id": "consumables", "title": "Brush, filter and mop pad life", "status": "planned" },
+  { "id": "base-station", "title": "Base station: empty, wash and dry mops", "status": "planned" },
+  { "id": "do-not-disturb", "title": "Do not disturb", "status": "planned" }
+]

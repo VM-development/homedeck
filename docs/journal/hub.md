@@ -31,3 +31,11 @@ Article note: the privacy guard came before the first line of app code, because 
 **Conclusion:** The full HubCore suite passes under `swift test` (13 tests: 4 catalog, 3 store, 3 choices, 3 log) and the log survives relaunch with its 500-entry cap. Built on macOS 27 only; the iOS 17 target is not built here.
 **Next:** The shell: Home and Market screens that use these stores and the log.
 Article note: one log for six devices works best when every line says which device wrote it, so the Share button can export one device or all of them.
+
+## 2026-11-13: Device kits
+
+**Tried:** Moved the REX5 protocol package into Packages/ as Rex5Kit (App Group now group.local.homedeck.app), added its Catalog, CardSummary and features.json, and added six catalog-only kits (WalkingPadKit, MiScaleKit, PhilipsAirKit, ZeppelinKit, XiaomiFanKit, DreameKit) with starting feature lists, test-first.
+**Device answered:** n/a.
+**Conclusion:** The full package suite passes under `swift test` (54 tests: 13 HubCore, 39 Rex5Kit including the card summary, 2 catalog) with no warnings in the build output. Built on macOS 27 only; the iOS 17 target is not built here.
+**Next:** The shell: Home and Market screens that use these stores, and the REX5 screen with the Task 5 feature ids.
+Article note: a catalog kit can ship before any protocol code, because the feature list is the contract the Market reads and the device session fills in later.

@@ -1,0 +1,10 @@
+[
+  { "id": "power", "title": "Power on and off", "status": "planned" },
+  { "id": "speed", "title": "Fan speed", "status": "planned" },
+  { "id": "mode", "title": "Mode: direct or natural breeze", "status": "planned" },
+  { "id": "oscillation", "title": "Oscillation and its angle", "status": "planned" },
+  { "id": "timer", "title": "Timer", "status": "planned" },
+  { "id": "child-lock", "title": "Child lock", "status": "planned" },
+  { "id": "light", "title": "Indicator light", "status": "planned" },
+  { "id": "sound", "title": "Beep on or off", "status": "planned" }
+]
