@@ -1,0 +1,2 @@
+// Signing team for local builds. Copy Team.xcconfig.example to Team.xcconfig (git-ignored) and set your own team ID.
+#include? "Team.xcconfig"

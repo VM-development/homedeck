@@ -1,0 +1,522 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0C2EF2522EA720AD87E0777F /* HomeDeckKits in Frameworks */ = {isa = PBXBuildFile; productRef = 8B7070815A55AA6A33285655 /* HomeDeckKits */; };
+		3A7108446A996D494184C13D /* HomeDeckWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = CAC4985B335F496F1AA10FFF /* HomeDeckWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		AA073CBB023E55C8811EFEBB /* HomeDeckKits in Frameworks */ = {isa = PBXBuildFile; productRef = 627CF33B120E29714BFC8D5D /* HomeDeckKits */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2435C16EFF3907C585B510AA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BB38E83161135C2B227D6308 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ADCC51E1329BE282BF755A12;
+			remoteInfo = HomeDeckWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CB6AFE67C7A300269792CADE /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				3A7108446A996D494184C13D /* HomeDeckWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		06F53F18BE5B32A21DE4578A /* HomeDeck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HomeDeck.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		08E2D7DF7DDB7A9AB1D1DAD3 /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+		13221A0F9E9E002E85C6D107 /* HomeDeckKits */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Packages; sourceTree = SOURCE_ROOT; };
+		CAC4985B335F496F1AA10FFF /* HomeDeckWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HomeDeckWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		4F99B3FDFD23FBFAA81D33D0 /* Exceptions for "App" folder in "HomeDeck" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = A619DF68590FAE7670734999 /* HomeDeck */;
+		};
+		5C76C5FF97859F077275CC8B /* Exceptions for "Widgets" folder in "HomeDeckWidgets" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = ADCC51E1329BE282BF755A12 /* HomeDeckWidgets */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		8CAD01B9D7C5DDFA4452A8F3 /* App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4F99B3FDFD23FBFAA81D33D0 /* Exceptions for "App" folder in "HomeDeck" target */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		F34A81D0FEE3ED0934B50F6E /* Widgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5C76C5FF97859F077275CC8B /* Exceptions for "Widgets" folder in "HomeDeckWidgets" target */,
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
+		FC139A182D6CBF553EEA03B7 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5C1FF8A7CFE455D333C124B3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0C2EF2522EA720AD87E0777F /* HomeDeckKits in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6709367A3240E8F1F03D0BD7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA073CBB023E55C8811EFEBB /* HomeDeckKits in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		30250DE3FDC1647C47DCD4D8 = {
+			isa = PBXGroup;
+			children = (
+				8CAD01B9D7C5DDFA4452A8F3 /* App */,
+				858FA2347017FF513B83D1DC /* Config */,
+				E58F08C5B5AC05DF962BC8B3 /* Packages */,
+				FC139A182D6CBF553EEA03B7 /* Shared */,
+				F34A81D0FEE3ED0934B50F6E /* Widgets */,
+				C0862085B61ECC15678165BE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		858FA2347017FF513B83D1DC /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				08E2D7DF7DDB7A9AB1D1DAD3 /* Signing.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		C0862085B61ECC15678165BE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				06F53F18BE5B32A21DE4578A /* HomeDeck.app */,
+				CAC4985B335F496F1AA10FFF /* HomeDeckWidgets.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E58F08C5B5AC05DF962BC8B3 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				13221A0F9E9E002E85C6D107 /* HomeDeckKits */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A619DF68590FAE7670734999 /* HomeDeck */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6D31706D7D2350C048507362 /* Build configuration list for PBXNativeTarget "HomeDeck" */;
+			buildPhases = (
+				A17D93C38B678C675F4FEA7B /* Sources */,
+				E1FDB1E217946CBB243AA674 /* Resources */,
+				6709367A3240E8F1F03D0BD7 /* Frameworks */,
+				CB6AFE67C7A300269792CADE /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F497C6A10EE355B438E8F7C9 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				8CAD01B9D7C5DDFA4452A8F3 /* App */,
+				FC139A182D6CBF553EEA03B7 /* Shared */,
+			);
+			name = HomeDeck;
+			packageProductDependencies = (
+				627CF33B120E29714BFC8D5D /* HomeDeckKits */,
+			);
+			productName = HomeDeck;
+			productReference = 06F53F18BE5B32A21DE4578A /* HomeDeck.app */;
+			productType = "com.apple.product-type.application";
+		};
+		ADCC51E1329BE282BF755A12 /* HomeDeckWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6F7CFE0803B92B2FA32FB584 /* Build configuration list for PBXNativeTarget "HomeDeckWidgets" */;
+			buildPhases = (
+				04DA1524B7DEF365DCEEB0B0 /* Sources */,
+				901CBF54844550AC222EBE3F /* Resources */,
+				5C1FF8A7CFE455D333C124B3 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				F34A81D0FEE3ED0934B50F6E /* Widgets */,
+				FC139A182D6CBF553EEA03B7 /* Shared */,
+			);
+			name = HomeDeckWidgets;
+			packageProductDependencies = (
+				8B7070815A55AA6A33285655 /* HomeDeckKits */,
+			);
+			productName = HomeDeckWidgets;
+			productReference = CAC4985B335F496F1AA10FFF /* HomeDeckWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		BB38E83161135C2B227D6308 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					A619DF68590FAE7670734999 = {
+						ProvisioningStyle = Automatic;
+					};
+					ADCC51E1329BE282BF755A12 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 1D1AA1D2E810FD02430757A2 /* Build configuration list for PBXProject "HomeDeck" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 30250DE3FDC1647C47DCD4D8;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CBA5FF312B7993826DFCE8E8 /* XCLocalSwiftPackageReference "HomeDeckKits" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = C0862085B61ECC15678165BE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A619DF68590FAE7670734999 /* HomeDeck */,
+				ADCC51E1329BE282BF755A12 /* HomeDeckWidgets */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		901CBF54844550AC222EBE3F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E1FDB1E217946CBB243AA674 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		04DA1524B7DEF365DCEEB0B0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A17D93C38B678C675F4FEA7B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F497C6A10EE355B438E8F7C9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ADCC51E1329BE282BF755A12 /* HomeDeckWidgets */;
+			targetProxy = 2435C16EFF3907C585B510AA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2AAFFF6B54D8E75E153A25E2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/HomeDeck.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = local.homedeck.app;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		33F0F40B5B67C267D989D506 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Widgets/HomeDeckWidgets.entitlements;
+				INFOPLIST_FILE = Widgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = local.homedeck.app.widgets;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		72EC3BE002BBCBD265C3B513 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 08E2D7DF7DDB7A9AB1D1DAD3 /* Signing.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		914256673559CFC5D4218852 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 08E2D7DF7DDB7A9AB1D1DAD3 /* Signing.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A77EE4C4B7D56FA75AA81B10 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/HomeDeck.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = local.homedeck.app;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AADFFE306FA8F05EDB2DF8B7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Widgets/HomeDeckWidgets.entitlements;
+				INFOPLIST_FILE = Widgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = local.homedeck.app.widgets;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1D1AA1D2E810FD02430757A2 /* Build configuration list for PBXProject "HomeDeck" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				914256673559CFC5D4218852 /* Debug */,
+				72EC3BE002BBCBD265C3B513 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6D31706D7D2350C048507362 /* Build configuration list for PBXNativeTarget "HomeDeck" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2AAFFF6B54D8E75E153A25E2 /* Debug */,
+				A77EE4C4B7D56FA75AA81B10 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6F7CFE0803B92B2FA32FB584 /* Build configuration list for PBXNativeTarget "HomeDeckWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				33F0F40B5B67C267D989D506 /* Debug */,
+				AADFFE306FA8F05EDB2DF8B7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		CBA5FF312B7993826DFCE8E8 /* XCLocalSwiftPackageReference "HomeDeckKits" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		627CF33B120E29714BFC8D5D /* HomeDeckKits */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = HomeDeckKits;
+		};
+		8B7070815A55AA6A33285655 /* HomeDeckKits */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = HomeDeckKits;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = BB38E83161135C2B227D6308 /* Project object */;
+}
