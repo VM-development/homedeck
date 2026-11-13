@@ -42,15 +42,15 @@ def b64_cores(raw):
 def needles(literal):
     """Every byte string that would reveal the literal, mapped to a masked label for the report."""
     label = literal[:2] + "…"
-    raw = literal.encode()
     found = {}
     for variant in {literal, literal.lower(), literal.upper()}:
-        found[variant.encode().lower()] = f"{label} (text)"
-    hexed = raw.hex()
-    found[hexed.encode()] = f"{label} (hex)"
-    found[" ".join(hexed[i:i + 2] for i in range(0, len(hexed), 2)).encode()] = f"{label} (hex)"
-    for core in b64_cores(raw):
-        found[core] = f"{label} (base64)"
+        raw = variant.encode()
+        found[raw.lower()] = f"{label} (text)"
+        hexed = raw.hex()
+        found[hexed.encode()] = f"{label} (hex)"
+        found[" ".join(hexed[i:i + 2] for i in range(0, len(hexed), 2)).encode()] = f"{label} (hex)"
+        for core in b64_cores(raw):
+            found[core] = f"{label} (base64)"
     return found
 
 
@@ -64,6 +64,8 @@ def load_table():
             literal = line.strip()
             if literal and not literal.startswith("#"):
                 table.update(needles(literal))
+    if not table:
+        sys.exit(f"privacy-scan: {path} has no patterns. Add one private value per line before pushing.")
     return table
 
 
@@ -91,7 +93,7 @@ def pushed_blobs(lines):
             commits = git("rev-list", local_sha, "--not", "--remotes")
         for commit in commits.decode().split():
             yield f"commit {commit[:8]} (message and author)", git("log", "-1", "--format=%an %ae%n%cn %ce%n%B", commit)
-            raw = git("diff-tree", "-r", "--root", "--no-commit-id", "--raw", commit).decode()
+            raw = git("diff-tree", "-r", "-m", "--root", "--no-commit-id", "--raw", commit).decode()
             for entry in filter(None, raw.split("\n")):
                 meta, path = entry.split("\t", 1)
                 new_sha = meta.split()[3]
@@ -114,7 +116,8 @@ def self_test():
     table = needles(literal)
     raw = literal.encode()
     samples = [b"x " + raw + b" y", literal.upper().encode(), raw.hex().upper().encode(),
-               " ".join(f"{b:02X}" for b in raw).encode()]
+               " ".join(f"{b:02X}" for b in raw).encode(), literal.lower().encode().hex().encode(),
+               base64.b64encode(literal.upper().encode())]
     samples += [base64.b64encode(prefix + raw + b"tail") for prefix in (b"", b"a", b"ab")]
     for sample in samples:
         assert any(needle in sample.lower() for needle in table), sample
