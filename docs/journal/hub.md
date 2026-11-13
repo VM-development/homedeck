@@ -55,3 +55,11 @@ Article note: the old app became a device by moving its root view one level down
 **Conclusion:** The app builds for the iOS simulator with no errors and no warnings and launches. The tap-through checks (tiles and symbols, Add opening the device, hiding a feature, the wishlist button, the log filter) are pending: tapping the simulator wasn't available in this run.
 **Next:** Run the tap-through checks, then the first wave-1 device.
 Article note: the wishlist is a share sheet, not a backend: the user picks the features they want and sends the text, so there is nothing to host.
+
+## 2026-11-13: Docs and templates
+
+**Tried:** Wrote the docs every device session follows: the protocol and journal templates in docs/templates/, the adding-a-device checklist (branch and worktree rules, what a device session may touch, the nine steps from inventory to review), and a README and MIT LICENSE for the public repo, with the build steps and the privacy hook.
+**Device answered:** n/a.
+**Conclusion:** Docs only, so no test run applies here. The checklist names the files a device session may change, which keeps parallel device sessions out of each other's code. Evidence labels are not needed for docs.
+**Next:** Run the privacy scan and the hook setup on a fresh clone, then start the first wave-1 device session from the checklist.
+Article note: the checklist is the part of this project a second device should be able to follow without asking questions, so it was written before any second device.
