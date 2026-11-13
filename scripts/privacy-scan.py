@@ -2,7 +2,8 @@
 """Blocks pushes that would publish the owner's private values.
 
 Patterns come from Config/private-patterns.txt (git-ignored): one literal per line, '#' starts a comment.
-Each literal is searched case-insensitively as text, as hex (with and without spaces) and as base64,
+Each literal is searched case-insensitively as text, as hex (with and without spaces) and as base64;
+a literal of 3 or more hex bytes (A1:B2:C3) is also searched in every common byte format, reversed too,
 in every file being pushed (binary files too, so image metadata is covered) and in commit messages.
 
   privacy-scan.py              scan tracked and new, not ignored, files in the working tree
@@ -11,6 +12,7 @@ in every file being pushed (binary files too, so image metadata is covered) and 
 """
 import base64
 import os
+import re
 import subprocess
 import sys
 
@@ -39,6 +41,24 @@ def b64_cores(raw):
     return cores
 
 
+HEX_BYTES = re.compile(r"[0-9a-f]{2}(?:([:\- ]?)[0-9a-f]{2}(?:\1[0-9a-f]{2})+)", re.I)
+
+
+def hex_byte_needles(literal, label):
+    """Needles for a literal written as 3+ hex bytes: other separators, reversed order, raw bytes (6+ bytes)."""
+    found = {}
+    if not HEX_BYTES.fullmatch(literal):
+        return found
+    parts = re.findall("[0-9a-f]{2}", literal.lower())
+    for ordered in (parts, parts[::-1]):
+        for text in ("".join(ordered), ":".join(ordered), "-".join(ordered), " ".join(ordered),
+                     ", ".join("0x" + b for b in ordered)):
+            found[text.encode()] = f"{label} (hex bytes)"
+        if len(ordered) >= 6:  # 3-byte raw sequences would match random data in binaries
+            found[bytes.fromhex("".join(ordered))] = f"{label} (hex bytes)"
+    return found
+
+
 def needles(literal):
     """Every byte string that would reveal the literal, mapped to a masked label for the report."""
     label = literal[:2] + "…"
@@ -51,13 +71,22 @@ def needles(literal):
         found[" ".join(hexed[i:i + 2] for i in range(0, len(hexed), 2)).encode()] = f"{label} (hex)"
         for core in b64_cores(raw):
             found[core] = f"{label} (base64)"
+    found.update(hex_byte_needles(literal, label))
     return found
 
 
+def main_checkout():
+    """The patterns file is git-ignored, so it lives only in the main checkout, not in device worktrees."""
+    common = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+                            capture_output=True, text=True, check=True).stdout.strip()
+    return os.path.dirname(common)
+
+
 def load_table():
-    path = os.path.join(root(), "Config", "private-patterns.txt")
+    path = os.path.join(main_checkout(), "Config", "private-patterns.txt")
     if not os.path.exists(path):
-        sys.exit(f"privacy-scan: {path} is missing. Create it (one private value per line) before pushing.")
+        sys.exit(f"privacy-scan: {path} is missing. That file lives only in the main checkout; "
+                 "do not create it, ask the owner.")
     table = {}
     with open(path, encoding="utf-8") as patterns:
         for line in patterns:
@@ -122,6 +151,14 @@ def self_test():
     for sample in samples:
         assert any(needle in sample.lower() for needle in table), sample
     assert not any(needle in b"nothing private here" for needle in table)
+    hexed = needles("A1:B2:C3:D4:E5:F6")
+    raw6 = bytes.fromhex("A1B2C3D4E5F6")
+    for sample in (b"a1 b2 c3 d4 e5 f6", b"A1B2C3D4E5F6", b"A1-B2-C3-D4-E5-F6",
+                   b"0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6", b"F6:E5:D4:C3:B2:A1",
+                   b'bytes.fromhex("A1B2C3D4E5F6")', b"\x00\xff" + raw6 + b"\x01"):
+        assert any(needle in sample.lower() for needle in hexed), sample
+    assert raw6 in hexed
+    assert bytes.fromhex("A1B2C3") not in needles("A1:B2:C3")
     print("privacy-scan self-test passed")
 
 
