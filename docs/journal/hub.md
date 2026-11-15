@@ -87,3 +87,11 @@ Article note: the first real test changed the plan twice in ten minutes: the ear
 **Conclusion:** Added `AenoKit` with a starting feature list (boil, target and current temperature, keep warm, presets, status), all planned and expected rather than read from the app (guess). Market now lists seven devices; the kettle goes to wave 2.
 **Next:** The device session checks Tuya's local protocol against the kettle and works out how to get its local key.
 Article note: a white-label app is mostly someone else's SDK; the interesting part, the device panel, isn't in the APK at all.
+
+## 2026-11-15: White marble app icon
+
+**Tried:** The owner asked for a white marble app icon in place of the black marble one inherited from the REX5 app. Generated it locally from fractal noise (grey veins bent by low-frequency noise on near-white stone, fixed seed), so it is a computed texture, not a photo.
+**Device answered:** n/a. The simulator kept showing the old icon after a plain reinstall; deleting the app and installing again refreshed it.
+**Conclusion:** `AppIcon.png` is now white marble (1024 px, no transparency, one universal size as before). Builds; checked on the simulator home screen.
+**Next:** The owner sees it on the phone with the next install.
+Article note: the first texture had veins that closed into loops and looked like a contour map; lowering the noise frequency made them run one way, like real stone.
