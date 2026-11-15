@@ -5,6 +5,7 @@ import PhilipsAirKit
 import ZeppelinKit
 import XiaomiFanKit
 import DreameKit
+import AenoKit
 
 /// Every device HomeDeck knows. A device session replaces its UnbuiltDevice with its own class.
 enum DeviceRegistry {
@@ -21,5 +22,7 @@ enum DeviceRegistry {
                    featuresURL: XiaomiFanCatalog.featuresURL) { UnbuiltDevice(name: "Xiaomi Standing Fan 2 Pro") },
         DeviceKind(id: "dreame-l40-ultra", name: "Dreame L40 Ultra", symbol: "circle.circle", link: .wifi,
                    featuresURL: DreameCatalog.featuresURL) { UnbuiltDevice(name: "Dreame L40 Ultra") },
+        DeviceKind(id: "aeno-ek7s", name: "AENO EK7S Kettle", symbol: "cup.and.saucer", link: .wifi,
+                   featuresURL: AenoCatalog.featuresURL) { UnbuiltDevice(name: "AENO EK7S Kettle") },
     ]
 }

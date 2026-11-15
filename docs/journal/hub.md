@@ -79,3 +79,11 @@ Article note: at the first real test the hub decided that a working app doesn't 
 **Conclusion:** Moved "Send wishlist" into the feature list as its own row; it shows as soon as one feature is wanted (verified in the simulator). Phase 0 works on the phone, with no device module yet.
 **Next:** The owner's yes for creating `main`, the public repo and the first push; then the wave-1 prep step before device sessions start.
 Article note: the first real test changed the plan twice in ten minutes: the earbuds stayed in their own app, and a button the code review called fine turned out to be invisible.
+
+## 2026-11-15: AENO EK7S kettle joins the catalog
+
+**Tried:** The owner added a seventh device, the AENO EK7S smart kettle, and provided the vendor's Android app (in `research/aeno-ek7s/`, git-ignored). Read its package with Android build-tools only; nothing was installed or run.
+**Device answered:** n/a. The app is a Tuya (Thing Clips) white-label app: Tuya SDK classes and native libraries throughout, Wi-Fi and Bluetooth pairing permissions. Its kettle screen is a panel the Tuya cloud serves at runtime, so the APK names no kettle features.
+**Conclusion:** Added `AenoKit` with a starting feature list (boil, target and current temperature, keep warm, presets, status), all planned and expected rather than read from the app (guess). Market now lists seven devices; the kettle goes to wave 2.
+**Next:** The device session checks Tuya's local protocol against the kettle and works out how to get its local key.
+Article note: a white-label app is mostly someone else's SDK; the interesting part, the device panel, isn't in the APK at all.

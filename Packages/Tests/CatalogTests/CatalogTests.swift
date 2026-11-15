@@ -6,6 +6,7 @@ import PhilipsAirKit
 import ZeppelinKit
 import XiaomiFanKit
 import DreameKit
+import AenoKit
 
 /// Every device's features.json must decode, with unique ids, before it can reach the Market.
 final class CatalogTests: XCTestCase {
@@ -16,6 +17,7 @@ final class CatalogTests: XCTestCase {
         "zeppelin-pro": ZeppelinCatalog.featuresURL,
         "xiaomi-fan-2-pro": XiaomiFanCatalog.featuresURL,
         "dreame-l40-ultra": DreameCatalog.featuresURL,
+        "aeno-ek7s": AenoCatalog.featuresURL,
     ]
 
     func testEveryFeatureListDecodesWithUniqueIDs() {

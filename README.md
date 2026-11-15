@@ -14,6 +14,7 @@ It isn't affiliated with any of the device makers.
 | Bowers & Wilkins Zeppelin Pro Edition | Wi-Fi | Planned |
 | Xiaomi Smart Standing Fan 2 Pro | Wi-Fi | Planned |
 | Dreame L40 Ultra | Wi-Fi | Planned |
+| AENO EK7S smart kettle | Wi-Fi | Planned |
 
 The app's Market tab shows every feature of every device and whether it works yet. The Noble FoKus Rex5 earbuds keep their own [REX5 app](https://github.com/VM-development/noble-rex5-custom-app).
 

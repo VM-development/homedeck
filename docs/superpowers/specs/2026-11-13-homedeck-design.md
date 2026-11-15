@@ -31,6 +31,7 @@ All expectations below are unverified. Checking them is step 2 of each device's 
 | Xiaomi Smart Standing Fan 2 Pro | Wi-Fi | Mi Home | Local Xiaomi MIoT protocol with a per-device token from the Xiaomi cloud | 2 |
 | Mi Mijia Body Composition Scale S400 | Bluetooth | Mi Home / Zepp Life | Measurements in encrypted BLE advertisements; bind key from the Xiaomi cloud | 2 |
 | Dreame L40 Ultra CE | Wi-Fi | Dreamehome / Mi Home | Newer Dreame models are often controllable only through Dreame's cloud | 2 |
+| AENO EK7S smart kettle | Wi-Fi | AENO | The app is a Tuya (Thing Clips) white-label app; Tuya devices speak a local encrypted protocol (implemented by open-source projects such as tinytuya) with a per-device local key from the Tuya cloud. Its control screen is a panel downloaded at runtime, so the APK names no kettle features | 2 |
 | Shared: Xiaomi cloud keys | Cloud | Mi Home | Sign in once, fetch tokens and bind keys for the Xiaomi devices | 1 |
 
 The owner provides each vendor's Android APK in `research/<device>/`. Sessions decompile and read APKs; they never run them, and never download APKs themselves.
@@ -210,7 +211,7 @@ Done when:
 | Wave | Sessions |
 |---|---|
 | 1 | XiaomiCloudKit, WalkingPad C2, Philips AC2729, Zeppelin Pro |
-| 2 | Xiaomi fan, Mi S400 scale, Dreame L40 Ultra |
+| 2 | Xiaomi fan, Mi S400 scale, Dreame L40 Ultra, AENO EK7S kettle |
 
 At most four sessions run at once. Wave-2 sessions may start research before XiaomiCloudKit is merged, but test on the device only after it is.
 
@@ -242,4 +243,5 @@ Two devices of the same kind; Android or Mac apps; HomeKit or Matter bridging; s
 - The Dreame L40 Ultra may be cloud-only, which conflicts with local-first but is allowed by the cloud rule.
 - Xiaomi sign-in may require extra verification steps (two-factor codes, captchas). The owner completes those; the app may need an in-app web view for sign-in.
 - The Zeppelin Pro may offer no local control beyond AirPlay; then its module covers only what AirPlay and any discovered protocol allow.
+- The AENO EK7S's local key comes from the Tuya cloud; getting it may need a Tuya developer account or the AENO app's own sign-in, much like the Xiaomi keys.
 - One iPhone and one owner limit how much on-device testing happens in parallel.
