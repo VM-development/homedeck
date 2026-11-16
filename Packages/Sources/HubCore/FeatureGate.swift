@@ -15,6 +15,8 @@ private struct FeatureGate: ViewModifier {
     @Environment(\.deviceID) private var device
 
     @ViewBuilder func body(content: Content) -> some View {
+        // Without the shell's .environment(\.deviceID, …) every feature would read as shown, silently.
+        let _ = assert(!device.isEmpty, ".feature(\"\(feature)\") used outside a device screen")
         if !FeatureChoices.shared.isHidden(feature, device: device) { content }
     }
 }

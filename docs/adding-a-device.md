@@ -11,7 +11,7 @@ A device session changes only:
 - its one line in `App/DeviceRegistry.swift` (replace `UnbuiltDevice(...)` with the device's class);
 - for a Wi-Fi device, `App/Info.plist`: `NSLocalNetworkUsageDescription` (added once, by the first Wi-Fi device) and its Bonjour service type in `NSBonjourServices`.
 
-Anything else (the app entry and link routing, `Widgets/`, entitlements, HubCore, other devices' files): stop and ask the hub session.
+Anything else (the app entry and link routing, entitlements, HubCore, other devices' files): stop and ask the hub session.
 
 Raw material (APKs, decompiled code, captures, raw logs) goes in `research/<id>/`, which git ignores. Never copy it into the repo.
 

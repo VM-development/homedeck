@@ -95,3 +95,11 @@ Article note: a white-label app is mostly someone else's SDK; the interesting pa
 **Conclusion:** `AppIcon.png` is now white marble (1024 px, no transparency, one universal size as before). Builds; checked on the simulator home screen.
 **Next:** The owner sees it on the phone with the next install.
 Article note: the first texture had veins that closed into loops and looked like a contour map; lowering the noise frequency made them run one way, like real stone.
+
+## 2026-11-16: Setup before the first device
+
+**Tried:** The owner chose to build devices one at a time and check every feature on the real device before moving on, starting with the WalkingPad C2. Went through the prep list from the Phase 0 review.
+**Device answered:** n/a.
+**Conclusion:** `.feature(_:)` now asserts in debug builds when a screen forgets the device id, instead of silently showing every feature. The checklist no longer mentions the removed `Widgets/` folder. Three prep items wait for the device that needs them, since one-at-a-time work removes the parallel-edit clashes they guarded against: the local-network prompt text comes with the first Wi-Fi device, Xiaomi sign-in with the first Xiaomi device, and each kit still adds its own test-target line.
+**Next:** WalkingPad C2 on branch `device/walkingpad-c2`.
+Article note: building one device at a time made half of the "before wave 1" list unnecessary; most of it existed to stop parallel sessions from editing the same lines.
