@@ -13,7 +13,7 @@ enum DeviceRegistry {
         DeviceKind(id: "walkingpad-c2", name: "WalkingPad C2", symbol: "figure.walk", link: .bluetooth,
                    featuresURL: WalkingPadCatalog.featuresURL) { WalkingPadDevice() },
         DeviceKind(id: "mi-scale-s400", name: "Mi Body Composition Scale S400", symbol: "scalemass", link: .bluetooth,
-                   featuresURL: MiScaleCatalog.featuresURL) { UnbuiltDevice(name: "Mi Body Composition Scale S400") },
+                   featuresURL: MiScaleCatalog.featuresURL) { MiScaleDevice() },
         DeviceKind(id: "philips-ac2729", name: "Philips 2000i AC2729", symbol: "humidifier", link: .wifi,
                    featuresURL: PhilipsAirCatalog.featuresURL) { UnbuiltDevice(name: "Philips 2000i AC2729") },
         DeviceKind(id: "zeppelin-pro", name: "Zeppelin Pro Edition", symbol: "hifispeaker", link: .wifi,
