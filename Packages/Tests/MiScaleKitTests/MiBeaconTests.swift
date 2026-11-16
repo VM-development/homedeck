@@ -54,3 +54,24 @@ final class MiBeaconTests: XCTestCase {
         XCTAssertNil(MiBeacon.hexBytes("12:34", count: 6))
     }
 }
+
+final class BodyCompositionTests: XCTestCase {
+    func testMaleExample() {
+        // Computed separately from the same equations: 180 cm, 89.8 kg, 491 ohm, 40 years.
+        let c = BodyComposition(weight: 89.8, impedance: 491, heightCM: 180, age: 40, male: true)
+        XCTAssertEqual(c.bmi, 27.72, accuracy: 0.01)
+        XCTAssertEqual(c.leanMass!, 63.24, accuracy: 0.01)
+        XCTAssertEqual(c.fatPercent!, 29.58, accuracy: 0.01)
+        XCTAssertEqual(c.waterPercent!, 51.93, accuracy: 0.01)
+        XCTAssertEqual(c.muscleMass!, 32.55, accuracy: 0.01)
+        XCTAssertEqual(c.boneMass!, 3.16, accuracy: 0.01)
+    }
+
+    func testFemaleDiffersAndSocksGiveOnlyBMI() {
+        let female = BodyComposition(weight: 60, impedance: 600, heightCM: 165, age: 30, male: false)
+        XCTAssertEqual(female.fatPercent!, 30.45, accuracy: 0.01)
+        let socks = BodyComposition(weight: 60, impedance: nil, heightCM: 165, age: 30, male: false)
+        XCTAssertEqual(socks.bmi, 22.04, accuracy: 0.01)
+        XCTAssertNil(socks.fatPercent)
+    }
+}

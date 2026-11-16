@@ -17,3 +17,18 @@ Entries are only ever appended; dead ends stay. No real names, addresses, keys o
 - `4859d53b2b…` and `4859d53b2c…`: two encrypted measurement frames, 24 bytes each, about a second apart.
 **Conclusion:** iOS delivers the FE95 service data with a foreground scan (verified on device). The scale's idle frame carries its MAC, so HomeDeck can learn it instead of asking the owner (verified on device). The Swift AES-CCM decrypts all five published test frames.
 **Next:** The owner gets the bind key from the Xiaomi cloud; HomeDeck decrypts the frames it heard before the key was entered.
+
+## 2026-11-16: Bind key, weight and heart rate
+
+**Tried:** The owner ran Xiaomi Cloud Tokens Extractor on the Mac (the first attempt failed: a Terminal in a deleted folder and an Intel-only `curl` first on the PATH; a one-line `uv run` of the single script worked). Checked the key offline against the two captured frames, then the owner pasted it into HomeDeck and weighed in for about 20 seconds.
+**Device answered:** Both earlier frames decrypted offline (profile 1, weight and 50 kHz impedance; then 250 kHz impedance; no heart rate). On the phone, the new weigh-in decrypted with weight, heart rate and both impedances. The scale's timestamp matched the phone's clock.
+**Conclusion:** Decryption on the iPhone, the learned MAC, weight and heart rate work (verified on device). Two bugs: the setup screen didn't switch after Save (the key wasn't observed), and frames heard before an app reinstall were lost, as expected. Frames also arrived with the `FE95` scan filter, so the foreground "scan everything" mode was dropped.
+**Next:** People, body composition and Apple Health.
+
+## 2026-11-16: People, body composition and Apple Health
+
+**Tried:** Added a person per scale slot (name, height, birth year, sex) kept on the phone, body composition from published equations, a trend chart, and saving to Apple Health 20 s after a weigh-in's last frame (HealthKit entitlement and usage text added). The owner filled in Person 1, allowed Health, and weighed in.
+**Device answered:** Weigh-in with weight, heart rate and both impedances; "saved the weigh-in to Apple Health" 21 s later. The owner saw the body composition card, the trend chart and the new weight in the Health app.
+**Conclusion:** All six features work (verified on device). Body composition is an estimate; it hasn't been compared with Xiaomi Home's figures.
+**Next:** Hub review and merge. Open: a locked-phone weigh-in (background capture) and a comparison with Xiaomi Home's body composition.
+Article note: the key question from the research, "how does an iPhone get the MAC it can't see?", had the simplest answer: the scale says it out loud in its first, unencrypted frame.

@@ -111,3 +111,11 @@ Article note: building one device at a time made half of the "before wave 1" lis
 **Conclusion:** All five WalkingPad features are working: start and stop, speed, the three modes, live speed, time, distance and steps, and walk history, which HomeDeck records itself. Polling kept running with the phone locked. Market now shows "5 of 5 features working" for it.
 **Next:** The owner's review and the merge; then the next device.
 Article note: the research pass left ten open questions; three short tests on the real device closed six of them, and the answer to one (stored walks) changed the design.
+
+## 2026-11-16: Mi Body Composition Scale S400 works
+
+**Tried:** Built the scale module on branch `device/mi-scale-s400` in two rounds (decrypting the scale's broadcasts, then people, body composition and Apple Health), tested on the owner's iPhone and scale, reading the app's log off the phone after each weigh-in.
+**Device answered:** See `docs/devices/mi-scale-s400/journal.md`: the global S400 (product `0x3BD5`), the MAC broadcast in an unencrypted idle frame, weigh-ins in two encrypted frames.
+**Conclusion:** All six scale features work. Shared changes this device needed: `HubCore/Keychain.swift` (device secrets; the spec had planned it inside XiaomiCloudKit), the HealthKit entitlement, and the Health usage texts in `Info.plist`. The bind key comes from the owner running Xiaomi Cloud Tokens Extractor, so HomeDeck has no Xiaomi sign-in yet; the fan's token came from the same run.
+**Next:** The owner's review and merge; then the next device.
+Article note: the owner pasted the extractor's whole output (keys, tokens, MACs) into the chat. Nothing was written to the repo; the values went into the git-ignored privacy-scan patterns so a commit containing them is refused.

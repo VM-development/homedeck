@@ -12,8 +12,28 @@ struct WeighIn: Codable, Identifiable, Equatable {
     var heartRate: Int?
     var impedance50: Double?
     var impedance250: Double?
+    /// Optional so weigh-ins saved before this field still decode.
+    var savedToHealth: Bool?
 
     var id: UInt32 { scaleTime }
+}
+
+/// The person behind one of the scale's user slots. Kept only on this iPhone.
+struct Person: Codable, Equatable, Identifiable {
+    /// The scale's profile slot (1, 2, …).
+    let id: Int
+    var name = ""
+    var heightCM: Double?
+    var birthYear: Int?
+    var male = true
+    var savesToHealth = false
+
+    var title: String { name.isEmpty ? "Person \(id)" : name }
+    var age: Int? { birthYear.map { Calendar.current.component(.year, from: Date()) - $0 } }
+    var details: String? {
+        guard let heightCM, let age else { return nil }
+        return "\(Int(heightCM)) cm · \(age) · \(male ? "male" : "female")"
+    }
 }
 
 /// The S400 never connects: it broadcasts each weigh-in in encrypted advertisements, which HomeDeck decrypts
@@ -25,37 +45,36 @@ final class MiScaleDevice: NSObject, HomeDevice {
     private static let keyAccount = "mi-scale-s400.bindkey"
     private static let macAccount = "mi-scale-s400.mac"
     private static let weighInsKey = "mi-scale-s400.weighins"
+    private static let peopleKey = "mi-scale-s400.people"
     private static let service = CBUUID(string: MiBeacon.serviceUUID)
 
     private(set) var status: DeviceStatus = .notSetUp
     private(set) var weighIns: [WeighIn] = []
+    private(set) var people: [Person] = []
     /// When any S400 frame was last heard, set up or not: shows the owner that listening works.
     private(set) var lastHeard: Date?
     private(set) var decryptFailed = false
 
-    @ObservationIgnored private var key: [UInt8]?
-    @ObservationIgnored private var mac: [UInt8]?
+    private var key: [UInt8]?
+    private var mac: [UInt8]?
     @ObservationIgnored private var central: CBCentralManager?
     @ObservationIgnored private var lastCounter: [UUID: UInt8] = [:]
     /// Encrypted frames heard before the key was entered, decrypted as soon as it is.
     @ObservationIgnored private var unread: [MiBeacon] = []
+    @ObservationIgnored private var healthSave: Task<Void, Never>?
     @ObservationIgnored private let log = ConnectionLog.shared.tagged(MiScaleDevice.id)
     @ObservationIgnored private let defaults = UserDefaults.standard
 
     override init() {
         super.init()
         weighIns = defaults.data(forKey: Self.weighInsKey).flatMap { try? JSONDecoder().decode([WeighIn].self, from: $0) } ?? []
+        people = defaults.data(forKey: Self.peopleKey).flatMap { try? JSONDecoder().decode([Person].self, from: $0) } ?? []
         key = Keychain.get(Self.keyAccount).flatMap { MiBeacon.hexBytes($0, count: 16) }
         mac = Keychain.get(Self.macAccount).flatMap { MiBeacon.hexBytes($0, count: 6) }
         // Only a scale set up before listens from launch: no permission prompt, and background capture keeps working.
         if key != nil, mac != nil {
             updateStatus()
             startCentral()
-        }
-        for name in [UIApplication.didEnterBackgroundNotification, UIApplication.willEnterForegroundNotification] {
-            NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
-                MainActor.assumeIsolated { self?.scan() }
-            }
         }
     }
 
@@ -119,15 +138,11 @@ final class MiScaleDevice: NSObject, HomeDevice {
                                    options: [CBCentralManagerOptionRestoreIdentifierKey: "homedeck.\(Self.id)"])
     }
 
-    /// Foreground: every advertisement, since whether iOS matches an FE95 filter to service data is unknown.
-    /// Background: iOS requires a service filter.
+    /// iOS matches the FE95 filter against the scale's service data (seen on device), and the background needs a filter.
     private func scan() {
         guard let central, central.state == .poweredOn else { return }
-        let foreground = UIApplication.shared.applicationState != .background
-        central.stopScan()
-        central.scanForPeripherals(withServices: foreground ? nil : [Self.service],
-                                   options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
-        log.add("listening (\(foreground ? "all advertisements" : "FE95 only, background"))")
+        central.scanForPeripherals(withServices: [Self.service], options: [CBCentralManagerScanOptionAllowDuplicatesKey: true])
+        log.add("listening for FE95")
     }
 
     private func bluetoothChanged(_ state: CBManagerState) {
@@ -191,8 +206,61 @@ final class MiScaleDevice: NSObject, HomeDevice {
         } else {
             return  // second impedance without its weight frame
         }
-        defaults.set(try? JSONEncoder().encode(weighIns), forKey: Self.weighInsKey)
+        saveWeighIns()
         updateStatus()
+        // A weigh-in arrives in two or three frames; save it to Health once they've stopped coming.
+        healthSave?.cancel()
+        healthSave = Task {
+            try? await Task.sleep(for: .seconds(20))
+            if !Task.isCancelled { await saveToHealth(reading.timestamp) }
+        }
+    }
+
+    private func saveWeighIns() {
+        defaults.set(try? JSONEncoder().encode(weighIns), forKey: Self.weighInsKey)
+    }
+
+    // MARK: People and Health
+
+    /// Every profile slot seen on the scale or edited, guests (slot 0) excluded.
+    var profileIDs: [Int] {
+        Set(weighIns.map(\.profileID) + people.map(\.id)).filter { $0 != 0 }.sorted()
+    }
+
+    func person(_ id: Int) -> Person { people.first { $0.id == id } ?? Person(id: id) }
+
+    func composition(for weighIn: WeighIn) -> BodyComposition? {
+        let p = person(weighIn.profileID)
+        guard weighIn.profileID != 0, let height = p.heightCM, let age = p.age else { return nil }
+        return BodyComposition(weight: weighIn.weight, impedance: weighIn.impedance50, heightCM: height, age: age, male: p.male)
+    }
+
+    func save(_ person: Person) async {
+        var person = person
+        if person.savesToHealth, !(await HealthSaver.requestAccess()) {
+            person.savesToHealth = false
+            log.add("Apple Health access not granted")
+        }
+        // Apple Health belongs to this iPhone's owner: only one person saves to it.
+        if person.savesToHealth { for i in people.indices { people[i].savesToHealth = false } }
+        people.removeAll { $0.id == person.id }
+        people.append(person)
+        people.sort { $0.id < $1.id }
+        defaults.set(try? JSONEncoder().encode(people), forKey: Self.peopleKey)
+    }
+
+    private func saveToHealth(_ scaleTime: UInt32) async {
+        guard let index = weighIns.firstIndex(where: { $0.scaleTime == scaleTime }), weighIns[index].savedToHealth != true,
+              person(weighIns[index].profileID).savesToHealth else { return }
+        let weighIn = weighIns[index]
+        do {
+            try await HealthSaver.save(weighIn, composition: composition(for: weighIn))
+            weighIns[index].savedToHealth = true
+            saveWeighIns()
+            log.add("saved the weigh-in to Apple Health")
+        } catch {
+            log.add("Apple Health save failed: \(error.localizedDescription)")
+        }
     }
 
     /// The scale's clock is set by Xiaomi Home; trust it only when it's close to the phone's.

@@ -1,8 +1,8 @@
 [
-  { "id": "weight", "title": "Weight", "status": "planned" },
-  { "id": "body-composition", "title": "Body composition: fat, muscle, water, bone, BMI", "status": "planned" },
-  { "id": "heart-rate", "title": "Heart rate", "status": "planned" },
-  { "id": "profiles", "title": "User profiles", "status": "planned" },
-  { "id": "history", "title": "History and trends", "status": "planned" },
-  { "id": "apple-health", "title": "Save to Apple Health", "status": "planned" }
+  { "id": "weight", "title": "Weight", "status": "working" },
+  { "id": "body-composition", "title": "Body composition: fat, muscle, water, bone, BMI", "status": "working" },
+  { "id": "heart-rate", "title": "Heart rate", "status": "working" },
+  { "id": "profiles", "title": "User profiles", "status": "working" },
+  { "id": "history", "title": "History and trends", "status": "working" },
+  { "id": "apple-health", "title": "Save to Apple Health", "status": "working" }
 ]
