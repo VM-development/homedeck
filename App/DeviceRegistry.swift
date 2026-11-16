@@ -11,7 +11,7 @@ import AenoKit
 enum DeviceRegistry {
     static let kinds: [DeviceKind] = [
         DeviceKind(id: "walkingpad-c2", name: "WalkingPad C2", symbol: "figure.walk", link: .bluetooth,
-                   featuresURL: WalkingPadCatalog.featuresURL) { UnbuiltDevice(name: "WalkingPad C2") },
+                   featuresURL: WalkingPadCatalog.featuresURL) { WalkingPadDevice() },
         DeviceKind(id: "mi-scale-s400", name: "Mi Body Composition Scale S400", symbol: "scalemass", link: .bluetooth,
                    featuresURL: MiScaleCatalog.featuresURL) { UnbuiltDevice(name: "Mi Body Composition Scale S400") },
         DeviceKind(id: "philips-ac2729", name: "Philips 2000i AC2729", symbol: "humidifier", link: .wifi,

@@ -103,3 +103,11 @@ Article note: the first texture had veins that closed into loops and looked like
 **Conclusion:** `.feature(_:)` now asserts in debug builds when a screen forgets the device id, instead of silently showing every feature. The checklist no longer mentions the removed `Widgets/` folder. Three prep items wait for the device that needs them, since one-at-a-time work removes the parallel-edit clashes they guarded against: the local-network prompt text comes with the first Wi-Fi device, Xiaomi sign-in with the first Xiaomi device, and each kit still adds its own test-target line.
 **Next:** WalkingPad C2 on branch `device/walkingpad-c2`.
 Article note: building one device at a time made half of the "before wave 1" list unnecessary; most of it existed to stop parallel sessions from editing the same lines.
+
+## 2026-11-16: WalkingPad C2 works
+
+**Tried:** Built the first device module on branch `device/walkingpad-c2`, tested on the owner's iPhone against the real pad in three rounds, reading the app's connection log off the phone after each.
+**Device answered:** See `docs/devices/walkingpad-c2/journal.md`: the C2 needs no handshake, has no FTMS, uses state 4 for standby, and never returns a stored walk.
+**Conclusion:** All five WalkingPad features are working: start and stop, speed, the three modes, live speed, time, distance and steps, and walk history, which HomeDeck records itself. Polling kept running with the phone locked. Market now shows "5 of 5 features working" for it.
+**Next:** The owner's review and the merge; then the next device.
+Article note: the research pass left ten open questions; three short tests on the real device closed six of them, and the answer to one (stored walks) changed the design.

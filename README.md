@@ -8,7 +8,7 @@ It isn't affiliated with any of the device makers.
 
 | Device | Link | Status |
 |---|---|---|
-| WalkingPad C2 | Bluetooth | Planned |
+| WalkingPad C2 | Bluetooth | Working |
 | Mi Body Composition Scale S400 | Bluetooth | Planned |
 | Philips 2000i AC2729 | Wi-Fi | Planned |
 | Bowers & Wilkins Zeppelin Pro Edition | Wi-Fi | Planned |
