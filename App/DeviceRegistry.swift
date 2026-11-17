@@ -22,7 +22,7 @@ enum DeviceRegistry {
                    featuresURL: XiaomiFanCatalog.featuresURL) { XiaomiFanDevice() },
         DeviceKind(id: "dreame-l40-ultra", name: "Dreame L40 Ultra", symbol: "circle.circle", link: .wifi,
                    featuresURL: DreameCatalog.featuresURL) { UnbuiltDevice(name: "Dreame L40 Ultra") },
-        DeviceKind(id: "aeno-ek7s", name: "AENO EK7S Kettle", symbol: "cup.and.saucer", link: .wifi,
+        DeviceKind(id: "aeno-ek7s", name: "AENO EK7S Kettle", symbol: "cup.and.saucer", link: .bluetooth,
                    featuresURL: AenoCatalog.featuresURL) { UnbuiltDevice(name: "AENO EK7S Kettle") },
     ]
 }

@@ -143,3 +143,11 @@ Article note: with the token extractor, the cloud sign-in planned as a shared wa
 **Conclusion:** All twelve purifier features work. Shared changes: `Config/Secrets.xcconfig` (git-ignored, with a `.example`) included from `Signing.xcconfig` and passed through `Info.plist` as `PhilipsLANSecret`, by the owner's choice to keep the vendor's fixed LAN secret out of the public repo; the secret is in the privacy-scan patterns. README and `adding-a-device.md` mention the new file.
 **Next:** The owner's review and merge; then the next device.
 Article note: on the second Wi-Fi device, "is it on the same network as the phone?" was again the first question to ask.
+
+## 2026-11-17: AENO kettle paused
+
+**Tried:** Looked for the kettle on the LAN (Tuya broadcasts and TCP 6668) and checked what the open-source Tuya Bluetooth code needs.
+**Device answered:** See `docs/devices/aeno-ek7s/journal.md`: not on the LAN; the owner reports it uses Bluetooth; Tuya Bluetooth needs the local key, UUID and device id from Tuya's cloud.
+**Conclusion:** Paused by the owner's choice: they want to stay with the AENO app, and the remaining route (a full iPhone backup to look for the key in the AENO app's files) was declined. The catalog link changed from Wi-Fi to Bluetooth; README says "Paused".
+**Next:** The next device.
+Article note: the one device that needed a vendor cloud for its key, and no extractor exists for this white-label app, is where "no account" stopped.
