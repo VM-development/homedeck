@@ -49,7 +49,7 @@ struct MiScaleScreen: View {
             CardCaption("Or step on the scale: HomeDeck reads the MAC from its broadcast.")
         }
         if let error { CardCaption(error).foregroundStyle(.red) }
-        WideButton(title: "Save") { error = scale.setUp(key: keyText, mac: macText) }
+        BigButton(title: "Save", systemImage: "checkmark", tint: .blue) { error = scale.setUp(key: keyText, mac: macText) }
         CardCaption("The key stays in this iPhone's Keychain.")
     }
 
@@ -91,10 +91,7 @@ struct MiScaleScreen: View {
                     CardRow(title: "Bone", detail: c.boneMass.map { "\(kg($0)) kg" } ?? "–")
                     CardRow(title: "Lean mass", detail: c.leanMass.map { "\(kg($0)) kg" } ?? "–")
                 } else {
-                    Button { editing = scale.person(last.profileID) } label: {
-                        CardRow(title: "Add height, birth year and sex for \(scale.person(last.profileID).title)", chevron: true)
-                    }
-                    .buttonStyle(.plain)
+                    CardButton(title: "Add height, birth year and sex for \(scale.person(last.profileID).title)") { editing = scale.person(last.profileID) }
                 }
             }
             .feature("body-composition")
@@ -105,11 +102,7 @@ struct MiScaleScreen: View {
         GlassCard(title: "People on this scale") {
             ForEach(scale.profileIDs, id: \.self) { id in
                 let person = scale.person(id)
-                Button { editing = person } label: {
-                    CardRow(title: person.title, detail: person.savesToHealth ? "Apple Health" : person.details ?? "Add details",
-                            systemImage: "person", chevron: true)
-                }
-                .buttonStyle(.plain)
+                CardButton(title: person.title, detail: person.savesToHealth ? "Apple Health" : person.details ?? "Add details", systemImage: "person") { editing = person }
             }
             Button { editing = Person(id: scale.nextPersonID) } label: {
                 CardRow(title: "Add person", systemImage: "plus")
@@ -253,19 +246,5 @@ private struct PersonEditor: View {
             }
         }
         .environment(\.deviceID, MiScaleDevice.id)
-    }
-}
-
-/// Full-width tinted glass button.
-private struct WideButton: View {
-    let title: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(title).font(.headline).foregroundStyle(.white).frame(maxWidth: .infinity, minHeight: 52).contentShape(.capsule)
-        }
-        .buttonStyle(.plain)
-        .glassEffect(.clear.tint(.blue.opacity(0.7)).interactive(), in: .capsule)
     }
 }

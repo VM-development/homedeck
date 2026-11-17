@@ -22,8 +22,6 @@ public enum DeviceStatus: Equatable, Sendable {
 @MainActor
 public protocol HomeDevice: AnyObject, Observable {
     var status: DeviceStatus { get }
-    func connect() async
-    func disconnect() async
     /// The device's full screen, including first-time setup while the status is .notSetUp.
     func makeScreen() -> AnyView
 }
@@ -61,8 +59,6 @@ public final class UnbuiltDevice: HomeDevice {
     public init(name: String) { self.name = name }
 
     public var status: DeviceStatus { .notSetUp }
-    public func connect() async {}
-    public func disconnect() async {}
 
     public func makeScreen() -> AnyView {
         AnyView(ContentUnavailableView(

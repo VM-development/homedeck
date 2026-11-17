@@ -191,3 +191,14 @@ Article note: an article drafted from evidence labels inherits their honesty onl
 **Conclusion:** The skill covers research with evidence labels, probing from the Mac first, the kit, tests, device class and screen, the phone loop (`xcodebuild` to the phone, `devicectl` install, launch and log pull), finishing, the branch rules, and a table of what the devices did (wrong Wi-Fi, replies that echo stale values, full subscription slots, `%en0` addresses). `docs/adding-a-device.md` now matches it in two places: a fresh worktree copies the git-ignored config files in (it said link), and merges go into `phase-0-shell` while `main` doesn't exist; it also points to the skill. `mask.py --self-test` passes; a fresh agent applied the skill to a made-up device as a check.
 **Next:** Wave 2 uses the skill and refines it.
 Article note: across seven devices the most repeated lesson wasn't about protocols: first check the device is where the phone can reach it, and let the log, not the memory of the test, decide what works.
+
+## 2026-11-18: Audit and App/UI review applied
+
+**Tried:** Applied the over-engineering audit and the SwiftUI review of `App/UI` on branch `cleanup/audit-review`.
+**Device answered:** The owner checked every device screen on the phone: same clear-glass look, everything works as before.
+**Conclusion:**
+- Removed the never-called `connect()`/`disconnect()` from `HomeDevice` and every device, the unused `notPlanned` status, `GlassSegments.checked`, and the Dreame's research-probe property list. The screen now reads only what it shows: one cloud call per poll instead of two, three on opening instead of six.
+- Shared `CardButton` and `CardStat` replace 11 hand-built button rows and two duplicate views; the scale's `WideButton` became `BigButton`.
+- `BigButton`, `RoundButton` and `GlassChip` use the system's `.glass(.clear…)` button style. Round buttons have VoiceOver titles and scale with text size; segments and chips announce "selected" and are 44 pt tall; the segment lens doesn't slide with Reduce Motion; card rows read as one element.
+**Next:** The owner's review and merge.
+Article note: the audit's biggest cut was a protocol method every device implemented and nothing ever called.

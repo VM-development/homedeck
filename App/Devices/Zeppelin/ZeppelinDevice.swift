@@ -47,8 +47,6 @@ final class ZeppelinDevice: HomeDevice {
 
     // MARK: HomeDevice
 
-    func connect() async {}
-    func disconnect() async {}
     func makeScreen() -> AnyView { AnyView(ZeppelinScreen(speaker: self)) }
 
     // MARK: Setup

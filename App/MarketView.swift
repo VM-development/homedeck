@@ -57,7 +57,6 @@ struct FeatureListView: View {
                         set: { choices.setHidden(!$0, feature.id, device: kind.id) })
             }
             section("Planned", footer: "Switch on to ask for it in the wishlist.", features(.planned), want)
-            section("Not planned", footer: "Switch on if you want it after all.", features(.notPlanned), want)
             // In the list, not a bottom toolbar: iOS hides bottom toolbars when there is a tab bar.
             if let text = choices.wishlist(for: kind) {
                 Section { ShareLink("Send wishlist", item: text) }

@@ -39,8 +39,6 @@ final class XiaomiFanDevice: HomeDevice {
 
     // MARK: HomeDevice
 
-    func connect() async {}
-    func disconnect() async {}
     func makeScreen() -> AnyView { AnyView(XiaomiFanScreen(fan: self)) }
 
     // MARK: Setup

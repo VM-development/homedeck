@@ -24,7 +24,7 @@ final class FeatureChoicesTests: XCTestCase {
         let kind = try makeKind(id: "fan", [
             Feature(id: "power", title: "Power", status: .working),
             Feature(id: "timer", title: "Timer", status: .planned),
-            Feature(id: "light", title: "Light", status: .notPlanned),
+            Feature(id: "light", title: "Light", status: .planned),
         ])
         let choices = FeatureChoices(defaults: freshDefaults())
         XCTAssertNil(choices.wishlist(for: kind))

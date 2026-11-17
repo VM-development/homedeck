@@ -41,12 +41,12 @@ struct WalkingPadScreen: View {
         GlassCard(title: "Now") {
             Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 12) {
                 GridRow {
-                    Stat(label: "Speed", value: live.map { "\($0.speed.formatted(.number.precision(.fractionLength(1)))) km/h" })
-                    Stat(label: "Time", value: live.map { Duration.seconds($0.seconds).formatted(.time(pattern: .minuteSecond)) })
+                    CardStat(label: "Speed", value: live.map { "\($0.speed.formatted(.number.precision(.fractionLength(1)))) km/h" })
+                    CardStat(label: "Time", value: live.map { Duration.seconds($0.seconds).formatted(.time(pattern: .minuteSecond)) })
                 }
                 GridRow {
-                    Stat(label: "Distance", value: live.map { "\((Double($0.meters) / 1000).formatted(.number.precision(.fractionLength(2)))) km" })
-                    Stat(label: "Steps", value: live.map { $0.steps.formatted() })
+                    CardStat(label: "Distance", value: live.map { "\((Double($0.meters) / 1000).formatted(.number.precision(.fractionLength(2)))) km" })
+                    CardStat(label: "Steps", value: live.map { $0.steps.formatted() })
                 }
             }
             .padding(.vertical, 10)
@@ -67,7 +67,7 @@ struct WalkingPadScreen: View {
         GlassCard(title: "Speed") {
             let speed = pad.targetSpeed ?? live?.speed ?? 0
             HStack {
-                RoundButton(systemImage: "minus") { pad.setSpeed(speed - 0.5) }
+                RoundButton(title: "Slower", systemImage: "minus") { pad.setSpeed(speed - 0.5) }
                     .disabled(speed <= WalkingPad.speedRange.lowerBound)
                 Spacer()
                 Text("\(speed.formatted(.number.precision(.fractionLength(1)))) km/h")
@@ -75,7 +75,7 @@ struct WalkingPadScreen: View {
                     .contentTransition(.numericText(value: speed))
                     .animation(.smooth, value: speed)
                 Spacer()
-                RoundButton(systemImage: "plus") { pad.setSpeed(speed + 0.5) }
+                RoundButton(title: "Faster", systemImage: "plus") { pad.setSpeed(speed + 0.5) }
                     .disabled(speed >= WalkingPad.speedRange.upperBound)
             }
             .padding(.vertical, 8)
@@ -128,18 +128,5 @@ private extension Walk {
         let time = Duration.seconds(seconds).formatted(.units(allowed: [.hours, .minutes, .seconds], width: .abbreviated))
         let km = (Double(meters) / 1000).formatted(.number.precision(.fractionLength(2)))
         return "\(time) · \(km) km · \(steps.formatted()) steps"
-    }
-}
-
-private struct Stat: View {
-    let label: String
-    let value: String?
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(label).font(.footnote).foregroundStyle(.secondary)
-            Text(value ?? "–").font(.title3.weight(.semibold).monospacedDigit())
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

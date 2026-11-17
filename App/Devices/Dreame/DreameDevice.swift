@@ -79,8 +79,6 @@ final class DreameDevice: HomeDevice {
 
     // MARK: HomeDevice
 
-    func connect() async {}
-    func disconnect() async {}
     func makeScreen() -> AnyView { AnyView(DreameScreen(robot: self)) }
 
     // MARK: Sign-in
@@ -98,7 +96,6 @@ final class DreameDevice: HomeDevice {
         guard await findRobot() else { return problem ?? "No Dreame robot in this account." }
         save()
         log.add("signed in, robot \(model ?? "?")")
-        await probeEverything()
         return nil
     }
 
@@ -232,35 +229,20 @@ final class DreameDevice: HomeDevice {
 
     // MARK: State
 
-    static let core = [MIoT(2, 1), MIoT(2, 2), MIoT(3, 1), MIoT(3, 2), MIoT(4, 1), MIoT(4, 2), MIoT(4, 3), MIoT(4, 4), MIoT(4, 7),
-                       MIoT(4, 23), MIoT(4, 25), MIoT(4, 63), MIoT(15, 5), MIoT(28, 1)]
+    /// What the screen shows that moves: state, error, battery, last clean, suction, mode, dock, wetness (one cloud call).
+    static let core = [MIoT(2, 1), MIoT(2, 2), MIoT(3, 1), MIoT(4, 2), MIoT(4, 3), MIoT(4, 4), MIoT(4, 23), MIoT(4, 25),
+                       MIoT(15, 5), MIoT(28, 1)]
 
-    /// Candidates from Tasshack's and Valetudo's tables; no spec exists for this model, so the log shows what answers.
-    static let candidates = core + [
-        MIoT(4, 5), MIoT(4, 10), MIoT(4, 11), MIoT(4, 12), MIoT(4, 18), MIoT(4, 27), MIoT(4, 28), MIoT(4, 37), MIoT(4, 40), MIoT(4, 46),
-        MIoT(5, 1), MIoT(5, 2), MIoT(5, 3), MIoT(6, 3), MIoT(7, 1), MIoT(8, 1),
-        MIoT(9, 1), MIoT(9, 2), MIoT(10, 1), MIoT(10, 2), MIoT(11, 1), MIoT(11, 2), MIoT(12, 1), MIoT(12, 2), MIoT(12, 3), MIoT(12, 4),
-        MIoT(15, 1), MIoT(15, 2), MIoT(16, 1), MIoT(16, 2), MIoT(17, 1), MIoT(17, 2), MIoT(18, 1), MIoT(18, 2),
-        MIoT(27, 1), MIoT(27, 2), MIoT(27, 3), MIoT(27, 4), MIoT(30, 1), MIoT(30, 2), MIoT(32, 1), MIoT(32, 2),
+    /// Everything else the screen shows: water (for room cleaning), Do Not Disturb, totals and parts.
+    /// The full candidate list from the first probe is in docs/devices/dreame-l40/protocol.md.
+    static let all = core + [
+        MIoT(4, 5), MIoT(5, 1), MIoT(5, 2), MIoT(5, 3), MIoT(9, 1), MIoT(9, 2), MIoT(10, 1), MIoT(10, 2), MIoT(11, 1), MIoT(11, 2),
+        MIoT(12, 3), MIoT(12, 4), MIoT(16, 1), MIoT(16, 2), MIoT(30, 1), MIoT(30, 2),
     ]
-
-    private func probeEverything() async {
-        let found = await read(Self.candidates)
-        values.merge(found) { $1 }
-        let missing = Self.candidates.filter { found[$0] == nil }
-        let shown = found.keys.sorted { ($0.siid, $0.piid) < ($1.siid, $1.piid) }.map { key -> String in
-            let value = found[key]!
-            if let text = value as? String, text.count > 24 { return "\(key)=<text \(text.count)>" }
-            return "\(key)=\(value)"
-        }
-        log.add("probe: \(shown.joined(separator: " "))")
-        log.add("probe: no answer from \(missing.map(\.description).joined(separator: " "))")
-        updateStatus()
-    }
 
     func refresh(full: Bool = false) async {
         if session?.host == nil || model == nil { guard await findRobot() else { return } }
-        values.merge(await read(full ? Self.candidates : Self.core)) { $1 }
+        values.merge(await read(full ? Self.all : Self.core)) { $1 }
         updateStatus()
     }
 

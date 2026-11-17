@@ -4,7 +4,7 @@ public enum Link: String, Codable, Sendable { case bluetooth, wifi }
 
 /// One thing a device's vendor app can do. The list lives in the device package's features.json.
 public struct Feature: Codable, Identifiable, Equatable, Sendable {
-    public enum Status: String, Codable, Sendable { case working, planned, notPlanned }
+    public enum Status: String, Codable, Sendable { case working, planned }
 
     public let id: String
     public let title: String

@@ -106,8 +106,6 @@ public struct DeviceKind {
 
 @MainActor public protocol HomeDevice: AnyObject, Observable {
     var status: DeviceStatus { get }
-    func connect() async
-    func disconnect() async
     func makeScreen() -> AnyView   // includes first-time setup while status is .notSetUp
 }
 ```

@@ -92,9 +92,9 @@ struct ZeppelinScreen: View {
             .feature("now-playing")
 
             HStack(spacing: 24) {
-                RoundButton(systemImage: "backward.fill") { speaker.press(.previous) }
-                RoundButton(systemImage: speaker.nowPlaying?.state == 1 ? "pause.fill" : "play.fill") { speaker.press(.playPause) }
-                RoundButton(systemImage: "forward.fill") { speaker.press(.next) }
+                RoundButton(title: "Previous track", systemImage: "backward.fill") { speaker.press(.previous) }
+                RoundButton(title: speaker.nowPlaying?.state == 1 ? "Pause" : "Play", systemImage: speaker.nowPlaying?.state == 1 ? "pause.fill" : "play.fill") { speaker.press(.playPause) }
+                RoundButton(title: "Next track", systemImage: "forward.fill") { speaker.press(.next) }
             }
             .disabled(speaker.nowPlaying == nil)
             .frame(maxWidth: .infinity)
@@ -159,16 +159,12 @@ struct ZeppelinScreen: View {
                 CardRow(title: "Version", detail: speaker.version ?? "–")
                 if let update = speaker.update {
                     if update.available {
-                        Button { confirmUpdate = true } label: {
-                            CardRow(title: "Install \(update.version.isEmpty ? "update" : update.version)", systemImage: "arrow.down.circle", chevron: true)
-                        }
-                        .buttonStyle(.plain)
+                        CardButton(title: "Install \(update.version.isEmpty ? "update" : update.version)", systemImage: "arrow.down.circle") { confirmUpdate = true }
                     } else {
                         CardRow(title: "Up to date", systemImage: "checkmark.circle")
                     }
                 } else {
-                    Button(action: speaker.checkForUpdate) { CardRow(title: "Check for updates", systemImage: "arrow.triangle.2.circlepath", chevron: true) }
-                        .buttonStyle(.plain)
+                    CardButton(title: "Check for updates", systemImage: "arrow.triangle.2.circlepath", action: speaker.checkForUpdate)
                 }
             }
             .feature("firmware-update")

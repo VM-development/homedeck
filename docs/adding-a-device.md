@@ -17,7 +17,7 @@ Raw material (APKs, decompiled code, captures, raw logs) goes in `research/<id>/
 
 ## Steps
 
-1. **Inventory.** List every feature of the vendor app in `Packages/Sources/<Name>Kit/features.json` (`working`, `planned` or `notPlanned`). Start `docs/devices/<id>/journal.md` from `docs/templates/journal.md`.
+1. **Inventory.** List every feature of the vendor app in `Packages/Sources/<Name>Kit/features.json` (`working` or `planned`). Start `docs/devices/<id>/journal.md` from `docs/templates/journal.md`.
 2. **Existing work.** Search for open-source implementations of the device's protocol (Home Assistant integrations, Python libraries, GitHub write-ups). Record each under Sources with its licence. Don't copy code from projects whose licence doesn't allow it; describe the protocol in your own words.
 3. **APK, for the gaps only.** The owner puts the vendor's Android app in `research/<id>/`. Unzip it (an `.xapk` is a zip of APKs) and dump the code with Android build-tools' `dexdump -d classes.dex > classes.dex.txt`. Read it; never install or run it.
 4. **Probe.** Make the device's module log every raw exchange to the shared log (`ConnectionLog.shared.tagged("<id>")`) and try the commands on the real device. Ask the owner for each physical step. Append a journal entry for each probe session as you go, not only at the end. Redact keys and tokens in log lines: the log can be shared.

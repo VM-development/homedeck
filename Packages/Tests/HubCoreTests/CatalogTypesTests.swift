@@ -4,17 +4,17 @@ import XCTest
 @MainActor
 final class CatalogTypesTests: XCTestCase {
     func testFeatureListDecodesAllStatuses() throws {
-        let json = #"[{"id":"a","title":"A","status":"working"},{"id":"b","title":"B","status":"planned"},{"id":"c","title":"C","status":"notPlanned"}]"#
+        let json = #"[{"id":"a","title":"A","status":"working"},{"id":"b","title":"B","status":"planned"}]"#
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".json")
         try Data(json.utf8).write(to: url)
-        XCTAssertEqual(Feature.load(from: url).map(\.status), [.working, .planned, .notPlanned])
+        XCTAssertEqual(Feature.load(from: url).map(\.status), [.working, .planned])
     }
 
     func testWorkingSummaryCountsWorkingFeatures() throws {
         let kind = try makeKind([
             Feature(id: "a", title: "A", status: .working),
             Feature(id: "b", title: "B", status: .planned),
-            Feature(id: "c", title: "C", status: .notPlanned),
+            Feature(id: "c", title: "C", status: .planned),
         ])
         XCTAssertEqual(kind.workingSummary, "1 of 3 features working")
     }
@@ -26,9 +26,8 @@ final class CatalogTypesTests: XCTestCase {
         XCTAssertEqual(DeviceStatus.connecting.cardLine, "Connecting…")
     }
 
-    func testUnbuiltDeviceStaysNotSetUp() async {
+    func testUnbuiltDeviceStaysNotSetUp() {
         let device = UnbuiltDevice(name: "Fan")
-        await device.connect()
         XCTAssertEqual(device.status, .notSetUp)
     }
 }

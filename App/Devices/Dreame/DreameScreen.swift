@@ -88,20 +88,15 @@ struct DreameScreen: View {
                     BigButton(title: "Start cleaning", systemImage: "play.fill", tint: .green) { robot.act(MIoT(2, 1), "start") }
                 }
                 GlassCard {
-                    Button { robot.act(MIoT(3, 1), "return to dock") } label: { CardRow(title: "Return to dock", systemImage: "house", chevron: true) }
-                        .buttonStyle(.plain)
-                    Button { robot.act(MIoT(4, 2), "stop") } label: { CardRow(title: "Stop", systemImage: "stop", chevron: true) }
-                        .buttonStyle(.plain)
+                    CardButton(title: "Return to dock", systemImage: "house") { robot.act(MIoT(3, 1), "return to dock") }
+                    CardButton(title: "Stop", systemImage: "stop") { robot.act(MIoT(4, 2), "stop") }
                 }
             }
             .feature("start-pause-dock")
 
             GlassCard(title: "Rooms") {
                 if robot.rooms.isEmpty {
-                    Button { Task { await robot.loadMap() } } label: {
-                        CardRow(title: robot.loadingMap ? "Reading the map…" : "Load rooms from the robot's map", systemImage: "map", chevron: true)
-                    }
-                    .buttonStyle(.plain)
+                    CardButton(title: robot.loadingMap ? "Reading the map…" : "Load rooms from the robot's map", systemImage: "map") { Task { await robot.loadMap() } }
                     .disabled(robot.loadingMap)
                 } else {
                     ForEach(robot.rooms) { room in
@@ -135,16 +130,10 @@ struct DreameScreen: View {
                 if let map = robot.map {
                     DreameMapView(map: map, selected: $selectedRooms)
                         .padding(.vertical, 10)
-                    Button { Task { await robot.loadMap() } } label: {
-                        CardRow(title: robot.loadingMap ? "Reading the map…" : "Refresh the map", systemImage: "arrow.clockwise", chevron: true)
-                    }
-                    .buttonStyle(.plain)
+                    CardButton(title: robot.loadingMap ? "Reading the map…" : "Refresh the map", systemImage: "arrow.clockwise") { Task { await robot.loadMap() } }
                     .disabled(robot.loadingMap)
                 } else {
-                    Button { Task { await robot.loadMap() } } label: {
-                        CardRow(title: robot.loadingMap ? "Reading the map…" : "Show the map", systemImage: "map", chevron: true)
-                    }
-                    .buttonStyle(.plain)
+                    CardButton(title: robot.loadingMap ? "Reading the map…" : "Show the map", systemImage: "map") { Task { await robot.loadMap() } }
                     .disabled(robot.loadingMap)
                 }
             }
@@ -181,18 +170,9 @@ struct DreameScreen: View {
 
             GlassCard(title: "Base station") {
                 CardRow(title: "Now", detail: dockState)
-                Button { robot.act(MIoT(4, 4), "wash mop pads", in: [(10, "2,1")]) } label: {
-                    CardRow(title: "Wash the mop pads", systemImage: "drop", chevron: true)
-                }
-                .buttonStyle(.plain)
-                Button { robot.act(MIoT(4, 4), "dry mop pads", in: [(10, "3,1")]) } label: {
-                    CardRow(title: "Dry the mop pads", systemImage: "wind", chevron: true)
-                }
-                .buttonStyle(.plain)
-                Button { robot.act(MIoT(15, 1), "empty dust bin") } label: {
-                    CardRow(title: "Empty the dust bin", systemImage: "trash", chevron: true)
-                }
-                .buttonStyle(.plain)
+                CardButton(title: "Wash the mop pads", systemImage: "drop") { robot.act(MIoT(4, 4), "wash mop pads", in: [(10, "2,1")]) }
+                CardButton(title: "Dry the mop pads", systemImage: "wind") { robot.act(MIoT(4, 4), "dry mop pads", in: [(10, "3,1")]) }
+                CardButton(title: "Empty the dust bin", systemImage: "trash") { robot.act(MIoT(15, 1), "empty dust bin") }
             }
             .feature("base-station")
 

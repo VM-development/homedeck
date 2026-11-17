@@ -1,7 +1,7 @@
 import SwiftUI
 import HubCore
 
-/// Settings tab. Accounts (Xiaomi sign-in) arrive with XiaomiCloudKit in wave 1.
+/// Settings tab: the connection log and the app's version.
 struct HubSettingsView: View {
     let kinds: [DeviceKind]
 

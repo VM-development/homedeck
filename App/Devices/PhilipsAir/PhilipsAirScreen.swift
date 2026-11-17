@@ -66,12 +66,12 @@ struct PhilipsAirScreen: View {
             GlassCard(title: "Air") {
                 Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 12) {
                     GridRow {
-                        Reading(label: "PM2.5", value: s.pm25.map { "\($0) µg/m³" }).feature("air-quality")
-                        Reading(label: "Allergen index", value: s.allergenIndex.map(String.init)).feature("air-quality")
+                        CardStat(label: "PM2.5", value: s.pm25.map { "\($0) µg/m³" }).feature("air-quality")
+                        CardStat(label: "Allergen index", value: s.allergenIndex.map(String.init)).feature("air-quality")
                     }
                     GridRow {
-                        Reading(label: "Humidity", value: s.humidity.map { "\($0) %" }).feature("humidity-reading")
-                        Reading(label: "Temperature", value: s.temperature.map { "\($0) °C" }).feature("humidity-reading")
+                        CardStat(label: "Humidity", value: s.humidity.map { "\($0) %" }).feature("humidity-reading")
+                        CardStat(label: "Temperature", value: s.temperature.map { "\($0) °C" }).feature("humidity-reading")
                     }
                 }
                 .padding(.vertical, 10)
@@ -183,17 +183,4 @@ struct PhilipsAirScreen: View {
 
     /// Filter life comes in hours.
     private func days(_ hours: Int) -> String { hours < 48 ? "\(hours) h" : "\(hours / 24) days" }
-}
-
-private struct Reading: View {
-    let label: String
-    let value: String?
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(label).font(.footnote).foregroundStyle(.secondary)
-            Text(value ?? "–").font(.title3.weight(.semibold).monospacedDigit())
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
 }

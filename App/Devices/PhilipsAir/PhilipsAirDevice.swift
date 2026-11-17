@@ -44,8 +44,6 @@ final class PhilipsAirDevice: HomeDevice {
 
     // MARK: HomeDevice
 
-    func connect() async {}
-    func disconnect() async {}
     func makeScreen() -> AnyView { AnyView(PhilipsAirScreen(purifier: self)) }
 
     // MARK: Setup

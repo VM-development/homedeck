@@ -56,8 +56,6 @@ final class WalkingPadDevice: NSObject, HomeDevice {
 
     // MARK: HomeDevice
 
-    func connect() async { if let pad { central?.connect(pad) } }
-    func disconnect() async { if let pad { central?.cancelPeripheralConnection(pad) } }
     func makeScreen() -> AnyView { AnyView(WalkingPadScreen(pad: self)) }
 
     // MARK: Setup
