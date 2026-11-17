@@ -175,3 +175,11 @@ Article note: six devices in a day, and four of them needed one thing before any
 **Conclusion:** Nine of eleven Dreame features work; schedules and wetness stay planned. Shared change: one more git-ignored constant, `DREAME_MAP_IV_HEX` (with its `.example` line and `Info.plist` key `DreameMapIV`), in the privacy-scan patterns.
 **Next:** The owner's review and merge.
 Article note: the room picker that worked was the map itself. The rooms had no names, so numbers on the map did what a list couldn't.
+
+## 2026-11-17: Article draft
+
+**Tried:** Drafted the article the spec plans, from the hub and device journals (their "Article note" lines), the protocol docs and their evidence labels, the README and the `phase-0-shell` history, in the style of the REX5 post: first person, bold run-in headings, a short table, a list of what isn't tested.
+**Device answered:** n/a.
+**Conclusion:** `docs/article/draft.md` is written for the owner to edit. Checking it against the sources removed four claims the sources don't support: "replaced six apps" (the six working devices use five vendor apps, and they are still needed for Wi-Fi setup), the kettle's Bluetooth as a fact (it is the owner's report, no scan), research "for every device" on day one (the kettle came two days later), and the research's wrong claims all being guesses (some came from open source or the spec). The HomeDeck repo link is a placeholder until the public repo exists.
+**Next:** The owner edits and publishes.
+Article note: an article drafted from evidence labels inherits their honesty only if every sentence is checked back against them; the first draft overclaimed four times.
