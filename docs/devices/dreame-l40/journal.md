@@ -29,3 +29,21 @@ Entries are only ever appended; dead ends stay. No real names, addresses, ids, t
 
 **Next:** Hub review and merge; then rooms and map (find where this model's map comes from).
 Article note: the last device was the one the plan expected to be hardest, and it was the easiest to drive. Its value table answered the first probe almost completely. The hard part was getting the right password onto a Google-login account.
+
+## 2026-11-17: Rooms and map
+
+**Tried:**
+- Searched the Dreamehome app for the map download path: not there, the vacuum panel is likely a runtime plugin.
+- Followed Tasshack's map request (action `6.1`), `getDownloadUrl`, and the decoder; ported them to `DreameKit` (`DreameMap`, tests with a made-up encrypted map built with Python and openssl).
+- A build that downloads, decodes and logs the map's structure without room names.
+
+**Device answered:**
+- Map request answered with the file name; the link and download worked first time; the file decrypted with the family IV.
+- No `seg_inf` in the live frame: the rooms sit in the embedded saved map (`rism`). That gave 8 rooms without names, so the map shows each room's number and a matching colour, and tapping a room selects it.
+- The live frame stores room × 4 per pixel (`fsm` = 1), one of Tasshack's three formats; all three are in the decoder.
+- Orientation took two tries. The raw image looked wrong, and Tasshack's vertical flip was still upside down for the owner. A left-right mirror of the raw rows matches Dreamehome.
+- Cleaning room 5 sent the robot there (`code 0`, seen by the owner).
+
+**Conclusion:** Rooms and the map work (verified on device). Schedules, wetness, zones and go-to-point stay open.
+**Next:** Hub review and merge.
+Article note: the room list was one level deeper than expected. The live map carries a second, older-format map inside it, and the room data lives there.

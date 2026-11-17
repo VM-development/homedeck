@@ -41,6 +41,8 @@
 	<string>$(DREAME_BASIC_HEX)</string>
 	<key>DreameKey</key>
 	<string>$(DREAME_KEY_HEX)</string>
+	<key>DreameMapIV</key>
+	<string>$(DREAME_MAP_IV_HEX)</string>
 	<key>DreameSalt</key>
 	<string>$(DREAME_SALT_HEX)</string>
 	<key>PhilipsLANSecret</key>

@@ -38,10 +38,20 @@ All **verified on device** (read, and for writes `code 0`):
 | Also read | `4.11` resume after charge, `4.12` carpet boost, `4.27` child lock, `4.28` carpet sensitivity, `4.37` auto detergent, `4.40`, `4.46`, `7.1` volume, `8.1` time zone, `27.x` | |
 | No answer | `4.10`, `6.3` (map file name), `17.x`, `18.x`, `32.x` | |
 
+## Map and rooms
+
+All **verified on device** unless marked:
+- The map file name isn't a readable property (`6.3` gives no answer). Action `6.1` with piid 2 = `{"req_type":1,"frame_type":"I","force_type":1}` returns it: `out` has piid 3 = `<file>,<key>` (32 characters on this robot), piid 1 (inline map, empty here) and piid 5 (**from open source** for the shape).
+- `POST /dreame-user-iot/iotfile/getDownloadUrl {did, model, filename: <file>, region}` returns a short-lived link; a plain GET gives the file (about 21 KB). The main Dreamehome app doesn't contain this path: the robot's panel is probably a plugin loaded at runtime (**guess**). `getOss1dDownloadUrl` is kept as a fallback (**from open source**, not needed here).
+- Decoding as in the kit's `DreameMap`: URL-safe base64, AES-256-CBC (key = first 32 hex characters of SHA-256 of `<key>`, IV = the L40 family's fixed string, git-ignored as `DREAME_MAP_IV_HEX`), zlib, a 27-byte header, one byte per pixel, JSON.
+- This robot's live frame: 154 × 522 pixels of 5 cm, JSON with `fsm` = 1, so each pixel stores room × 4 (63 wall, 62 floor; low bits 3 = carpet). The rooms (`seg_inf`) aren't in the live frame but in the saved map it carries under `rism` (base64 + zlib, not encrypted; 224 × 592 here): 8 rooms, ids 1–8, no names or types set, so they show as Room 1–8. The ids match the live frame's room pixels.
+- Drawn the Tasshack way the image was upside down for the owner; the owner's Dreamehome shows it mirrored left to right relative to the raw rows (Tasshack's flip plus a 180° turn). Dreamehome lets owners rotate the map, so another robot may need its rotation setting read.
+- Room cleaning: action `4.1` with piid 1 = 18 and piid 10 = `{"selects":[[room, 1, suction, water, 1], …]}`; `clean rooms [5]` sent the robot to that room.
+
 ## Not done
 
-- Rooms and map: the map file name property `6.3` doesn't answer and the old map download endpoint is gone from the app; needs another look (MQTT push, or the APK's new path).
 - Schedules (`8.2`): format not decoded.
+- Zone cleaning, go-to-point, map editing.
 
 ## Sources
 

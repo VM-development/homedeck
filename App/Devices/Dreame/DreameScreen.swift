@@ -96,6 +96,60 @@ struct DreameScreen: View {
             }
             .feature("start-pause-dock")
 
+            GlassCard(title: "Rooms") {
+                if robot.rooms.isEmpty {
+                    Button { Task { await robot.loadMap() } } label: {
+                        CardRow(title: robot.loadingMap ? "Reading the map…" : "Load rooms from the robot's map", systemImage: "map", chevron: true)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(robot.loadingMap)
+                } else {
+                    ForEach(robot.rooms) { room in
+                        Button {
+                            if selectedRooms.contains(room.id) { selectedRooms.remove(room.id) } else { selectedRooms.insert(room.id) }
+                        } label: {
+                            HStack(spacing: 12) {
+                                Circle().fill(DreameMapImage.color(room.id)).frame(width: 14, height: 14)
+                                Text(room.name)
+                                Spacer()
+                                Image(systemName: selectedRooms.contains(room.id) ? "checkmark.circle.fill" : "circle").foregroundStyle(.tint)
+                            }
+                            .padding(.vertical, 10)
+                            .contentShape(.rect)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    CardCaption("Tap rooms here or on the map.").padding(.bottom, 8)
+                }
+            }
+            .feature("rooms")
+            if !selectedRooms.isEmpty {
+                BigButton(title: "Clean \(selectedRooms.count == 1 ? "1 room" : "\(selectedRooms.count) rooms")", systemImage: "sparkles", tint: .green) {
+                    robot.clean(rooms: robot.rooms.map(\.id).filter(selectedRooms.contains))
+                    selectedRooms = []
+                }
+                .feature("rooms")
+            }
+
+            GlassCard(title: "Map") {
+                if let map = robot.map {
+                    DreameMapView(map: map, selected: $selectedRooms)
+                        .padding(.vertical, 10)
+                    Button { Task { await robot.loadMap() } } label: {
+                        CardRow(title: robot.loadingMap ? "Reading the map…" : "Refresh the map", systemImage: "arrow.clockwise", chevron: true)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(robot.loadingMap)
+                } else {
+                    Button { Task { await robot.loadMap() } } label: {
+                        CardRow(title: robot.loadingMap ? "Reading the map…" : "Show the map", systemImage: "map", chevron: true)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(robot.loadingMap)
+                }
+            }
+            .feature("map")
+
             GlassCard(title: "Mode") {
                 GlassSegments(options: [2, 0, 3, 1], title: modeTitle, selection: robot.cleaningMode, onSelect: robot.setCleaningMode)
                     .padding(.vertical, 10)
@@ -170,6 +224,7 @@ struct DreameScreen: View {
     }
 
     @State private var draggedWetness: Double?
+    @State private var selectedRooms: Set<Int> = []
 
     private var cleaning: Bool { [1, 7, 12, 25, 27, 38].contains(robot.int(MIoT(2, 1)) ?? 0) }
 
@@ -207,5 +262,95 @@ struct DreameScreen: View {
             let c = Calendar.current.dateComponents([.hour, .minute], from: date)
             robot.set(prop, String(format: "%02d:%02d", c.hour ?? 0, c.minute ?? 0), "do not disturb time")
         }
+    }
+}
+
+/// Draws the map's pixels with DreameMap's cell reading: rooms in colours (edges darker), walls dark, other floor grey.
+enum DreameMapImage {
+    /// Map pixel to image pixel. Tasshack draws rows bottom-up; the owner's Dreamehome shows that turned 180°, which
+    /// together is a left-right mirror. ponytail: Dreamehome lets owners rotate the map; read that setting if another
+    /// map shows up turned.
+    static func display(_ x: Double, _ y: Double, width: Int) -> CGPoint { CGPoint(x: Double(width) - x, y: y) }
+
+    static func color(_ room: Int) -> Color {
+        let c = palette[room % palette.count]
+        return Color(red: Double(c.0) / 255, green: Double(c.1) / 255, blue: Double(c.2) / 255)
+    }
+
+    static let palette: [(UInt8, UInt8, UInt8)] = [(126, 178, 230), (240, 178, 122), (150, 210, 150), (215, 160, 220), (240, 220, 120),
+                                                   (130, 200, 200), (230, 140, 140), (180, 180, 240), (200, 200, 150), (160, 200, 120)]
+
+    static func make(_ map: DreameMap) -> CGImage? {
+        var rgba = [UInt8](repeating: 0, count: map.width * map.height * 4)
+        for (i, p) in map.pixels.enumerated() {
+            let c: (UInt8, UInt8, UInt8)
+            switch map.cell(p) {
+            case .outside: continue
+            case .floor: c = (200, 200, 205)
+            case .wall: c = (70, 70, 80)
+            case .room(let room, let edge):
+                let base = palette[room % palette.count]
+                c = edge ? (base.0 / 4 * 3, base.1 / 4 * 3, base.2 / 4 * 3) : base
+            }
+            let o = (i / map.width * map.width + (map.width - 1 - i % map.width)) * 4  // mirrored, see `display`
+            (rgba[o], rgba[o + 1], rgba[o + 2], rgba[o + 3]) = (c.0, c.1, c.2, 255)
+        }
+        guard let provider = CGDataProvider(data: Data(rgba) as CFData) else { return nil }
+        return CGImage(width: map.width, height: map.height, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: map.width * 4,
+                       space: CGColorSpace(name: CGColorSpace.sRGB)!, bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue),
+                       provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent)
+    }
+}
+
+/// The map with each room's number at its centre; tapping a room selects it.
+struct DreameMapView: View {
+    let map: DreameMap
+    @Binding var selected: Set<Int>
+
+    var body: some View {
+        if let image = DreameMapImage.make(map) {
+            Image(decorative: image, scale: 1)
+                .resizable()
+                .interpolation(.none)
+                .aspectRatio(contentMode: .fit)
+                .overlay {
+                    GeometryReader { geometry in
+                        let scale = geometry.size.width / CGFloat(map.width)
+                        ForEach(centres, id: \.room) { item in
+                            Text(selected.contains(item.room) ? "✓\(item.room)" : "\(item.room)")
+                                .font(.caption.weight(.bold))
+                                .padding(.horizontal, 5)
+                                .background(.white.opacity(0.8), in: .capsule)
+                                .position(x: item.point.x * scale, y: item.point.y * scale)
+                        }
+                        ForEach(Array([(map.charger, Color.green), (map.robot, Color.blue)].enumerated()), id: \.offset) { _, item in
+                            let p = DreameMapImage.display(Double(item.0.x - map.left) / Double(map.gridSize),
+                                                           Double(item.0.y - map.top) / Double(map.gridSize), width: map.width)
+                            Circle().fill(item.1).stroke(.white, lineWidth: 1.5).frame(width: 10, height: 10)
+                                .position(x: p.x * scale, y: p.y * scale)
+                        }
+                        Color.clear.contentShape(.rect).onTapGesture { location in
+                            let p = DreameMapImage.display(location.x / scale, location.y / scale, width: map.width)
+                            let (x, y) = (Int(p.x), Int(p.y))
+                            guard x >= 0, y >= 0, x < map.width, y < map.height,
+                                  case .room(let room, _) = map.cell(map.pixels[y * map.width + x]) else { return }
+                            if selected.contains(room) { selected.remove(room) } else { selected.insert(room) }
+                        }
+                    }
+                }
+        }
+    }
+
+    /// Each room's pixel centre, in image coordinates.
+    private var centres: [(room: Int, point: CGPoint)] {
+        var sums: [Int: (x: Int, y: Int, n: Int)] = [:]
+        for (i, p) in map.pixels.enumerated() {
+            guard case .room(let room, _) = map.cell(p) else { continue }
+            let s = sums[room] ?? (0, 0, 0)
+            sums[room] = (s.x + i % map.width, s.y + i / map.width, s.n + 1)
+        }
+        return sums.map { room, s in
+            (room, DreameMapImage.display(Double(s.x) / Double(s.n) + 0.5, Double(s.y) / Double(s.n) + 0.5, width: map.width))
+        }.sorted { $0.room < $1.room }
     }
 }

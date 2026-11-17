@@ -3,6 +3,13 @@ import DreameKit
 import HubCore
 import SwiftUI
 
+/// A hex-encoded value from Config/Secrets.xcconfig, passed through Info.plist.
+private func secret(_ key: String) -> String {
+    let hex = Bundle.main.object(forInfoDictionaryKey: key) as? String ?? ""
+    let bytes = stride(from: 0, to: hex.count - 1, by: 2).compactMap { i -> UInt8? in UInt8(hex.dropFirst(i).prefix(2), radix: 16) }
+    return String(decoding: bytes, as: UTF8.self)
+}
+
 /// The L40 Ultra has no local API once it's in the Dreamehome app, so HomeDeck signs in to Dreame's cloud with the
 /// owner's Dreamehome account and sends MIoT commands through it. Only the session tokens are kept (Keychain).
 @MainActor
@@ -19,16 +26,16 @@ final class DreameDevice: HomeDevice {
     private(set) var problem: String?
 
     /// Nil when the app was built without the Dreame constants in Config/Secrets.xcconfig.
-    let keys: DreameCloud.Keys? = {
-        func secret(_ key: String) -> String {
-            let hex = Bundle.main.object(forInfoDictionaryKey: key) as? String ?? ""
-            let bytes = stride(from: 0, to: hex.count - 1, by: 2).compactMap { i -> UInt8? in
-                UInt8(hex.dropFirst(i).prefix(2), radix: 16)
-            }
-            return String(decoding: bytes, as: UTF8.self)
-        }
-        return DreameCloud.Keys(salt: secret("DreameSalt"), basic: secret("DreameBasic"), signing: secret("DreameKey"))
-    }()
+    let keys = DreameCloud.Keys(salt: secret("DreameSalt"), basic: secret("DreameBasic"), signing: secret("DreameKey"))
+    /// The map files' AES IV for this model family.
+    let mapIV: String? = { let iv = secret("DreameMapIV"); return iv.count == 16 ? iv : nil }()
+
+    private(set) var map: DreameMap?
+    /// From the last map read; cached so room cleaning works without downloading the map again.
+    private(set) var rooms: [DreameMap.Room] = []
+    private(set) var loadingMap = false
+
+    private static let roomsKey = "dreame-l40-ultra.rooms"
 
     struct Session: Codable {
         var username: String
@@ -42,6 +49,7 @@ final class DreameDevice: HomeDevice {
         var cloudRegion: String?
         var did: String?
         var host: String?
+        var uid: String?
     }
 
     @ObservationIgnored private var session: Session?
@@ -56,6 +64,10 @@ final class DreameDevice: HomeDevice {
     @ObservationIgnored private let log = ConnectionLog.shared.tagged(DreameDevice.id)
 
     init() {
+        rooms = (UserDefaults.standard.array(forKey: Self.roomsKey) as? [[String: Any]] ?? []).compactMap {
+            guard let id = $0["id"] as? Int, let name = $0["name"] as? String else { return nil }
+            return DreameMap.Room(id: id, name: name, type: $0["type"] as? Int ?? 0)
+        }
         session = Keychain.get(Self.sessionAccount).flatMap { try? JSONDecoder().decode(Session.self, from: Data($0.utf8)) }
         if session != nil {
             status = .connecting
@@ -193,6 +205,7 @@ final class DreameDevice: HomeDevice {
         model = robot["model"] as? String
         if let info = await api("dreame-user-iot/iotuserbind/device/info", ["did": did]) as? [String: Any] {
             session?.host = info["bindDomain"] as? String
+            session?.uid = (info["masterUid"] as? String) ?? (info["masterUid"] as? Int).map(String.init)
             model = info["model"] as? String ?? model
         }
         log.add("robot \(model ?? "?"), host \(session?.host == nil ? "missing" : "found")")
@@ -298,6 +311,82 @@ final class DreameDevice: HomeDevice {
     func setCleaningMode(_ raw: Int) {
         guard let packed = int(MIoT(4, 23)) else { return }
         set(MIoT(4, 23), Self.withMode(packed, raw), "cleaning mode \(raw)")
+    }
+
+    // MARK: Map and rooms
+
+    /// Asks the robot for a full map frame (action 6.1). The answer names a file in Dreame's storage, or carries the
+    /// map itself; the file comes through a short-lived download link.
+    func loadMap() async {
+        guard let did = session?.did, !loadingMap else { return }
+        loadingMap = true
+        defer { loadingMap = false }
+        let request = #"{"req_type":1,"frame_type":"I","force_type":1}"#
+        let result = await send("action", MIoT.action(MIoT(6, 1), did: did, in: [(2, request)])) as? [String: Any]
+        let out = result?["out"] as? [[String: Any]] ?? []
+        log.add("map request: code \(result?["code"].map { "\($0)" } ?? "none"), out "
+                + out.map { "\($0["piid"] ?? "?")=\(($0["value"] as? String)?.count ?? -1)ch" }.joined(separator: " "))
+        var text: String?
+        var file: String?
+        var key: String?
+        for entry in out {
+            guard let value = entry["value"] as? String, !value.isEmpty else { continue }
+            switch entry["piid"] as? Int {
+            case 3:
+                let parts = value.split(separator: ",", maxSplits: 1).map(String.init)
+                (file, key) = (parts[0], parts.count > 1 ? parts[1] : nil)
+            case 1: text = value
+            case 13 where file == nil && text == nil:  // older robots: "0,<map>" or "1,<file>[,<key>]"
+                let parts = value.split(separator: ",").map(String.init)
+                if parts.first == "0", parts.count > 1 { text = parts[1] }
+                if parts.first == "1", parts.count > 1 { (file, key) = (parts[1], parts.count > 2 ? parts[2] : nil) }
+            default: break
+            }
+        }
+        if text == nil, let file { text = await download(file) }
+        guard let text else { return fail("The robot didn't send a map.") }
+        guard let decoded = DreameMap(text: text, key: key, iv: mapIV) else {
+            log.add("map didn't decode (\(text.count) chars, key \(key == nil ? "none" : "given"), IV \(mapIV == nil ? "missing" : "set"))")
+            return fail("The map didn't decode.")
+        }
+        map = decoded
+        if !decoded.allRooms.isEmpty {
+            rooms = decoded.allRooms
+            UserDefaults.standard.set(rooms.map { ["id": $0.id, "name": $0.name, "type": $0.type] }, forKey: Self.roomsKey)
+        }
+        var low: [Int: Int] = [:]
+        var high: [Int: Int] = [:]
+        for p in decoded.pixels where p != 0 {
+            low[Int(p & 0x3F), default: 0] += 1
+            high[Int(p >> 6), default: 0] += 1
+        }
+        log.add("map: frame \(decoded.frameType) \(decoded.width)x\(decoded.height) grid \(decoded.gridSize), json \(decoded.json.keys.sorted())")
+        if let saved = decoded.savedMap {
+            log.add("saved map: frame \(saved.frameType) \(saved.width)x\(saved.height), json \(saved.json.keys.sorted()), rooms \(saved.rooms.map { "\($0.id) type \($0.type)" })")
+        }
+        log.add("map rooms: \(decoded.allRooms.map { "\($0.id) type \($0.type)" }); pixels low6 \(low.sorted { $0.key < $1.key }.map { "\($0.key):\($0.value)" }) high2 \(high.sorted { $0.key < $1.key }.map { "\($0.key):\($0.value)" })")
+    }
+
+    private func download(_ file: String) async -> String? {
+        guard let session, let did = session.did, let model else { return nil }
+        var link = await api("dreame-user-iot/iotfile/getDownloadUrl", ["did": did, "model": model, "filename": file, "region": session.region]) as? String
+        if link == nil, let uid = session.uid {
+            link = await api("dreame-user-iot/iotfile/getOss1dDownloadUrl",
+                             ["did": did, "uid": uid, "model": model, "filename": String(file.dropFirst()), "region": session.region]) as? String
+        }
+        log.add("map file link: \(link == nil ? "none" : "ok")")
+        guard let link, let url = URL(string: link), let (data, _) = try? await http.data(from: url) else { return nil }
+        log.add("map file: \(data.count) bytes")
+        return String(decoding: data, as: UTF8.self)
+    }
+
+    /// Room cleaning (mode 18) with the robot's current suction and water for each room, once, in Dreame's 5th-gen order.
+    func clean(rooms ids: [Int]) {
+        let suction = int(MIoT(4, 4)) ?? 1
+        let water = int(MIoT(4, 5)) ?? 2
+        let selects = ids.map { [$0, 1, suction, water, 1] }
+        guard let data = try? JSONSerialization.data(withJSONObject: ["selects": selects]) else { return }
+        act(MIoT(4, 1), "clean rooms \(ids)", in: [(1, 18), (10, String(decoding: data, as: UTF8.self))])
     }
 
     func int(_ prop: MIoT) -> Int? { (values[prop] as? NSNumber)?.intValue }

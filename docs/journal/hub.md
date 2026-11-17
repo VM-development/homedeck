@@ -167,3 +167,11 @@ Article note: asking "did you try X?" with the log open caught three untested fe
 **Conclusion:** First cloud device. Shared changes: three Dreame constants added to the git-ignored `Config/Secrets.xcconfig` (and its `.example`), passed through `Info.plist` as `DreameSalt`, `DreameBasic`, `DreameKey`; they are in the privacy-scan patterns. The Dreamehome session (tokens only, no password) is stored in the Keychain.
 **Next:** The owner's review and merge; rooms and map as a follow-up.
 Article note: six devices in a day, and four of them needed one thing before any protocol work: being on the right network or in the right app.
+
+## 2026-11-17: Dreame rooms and map
+
+**Tried:** Rooms and map for the Dreame on branch `device/dreame-l40`, from Tasshack's map request and decoder.
+**Device answered:** See `docs/devices/dreame-l40/journal.md`: the map comes from action `6.1` and a short-lived download link; the rooms are in a saved map embedded in the live one; room 5 cleaned on request.
+**Conclusion:** Nine of eleven Dreame features work; schedules and wetness stay planned. Shared change: one more git-ignored constant, `DREAME_MAP_IV_HEX` (with its `.example` line and `Info.plist` key `DreameMapIV`), in the privacy-scan patterns.
+**Next:** The owner's review and merge.
+Article note: the room picker that worked was the map itself. The rooms had no names, so numbers on the map did what a list couldn't.
