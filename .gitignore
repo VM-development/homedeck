@@ -9,4 +9,5 @@ xcuserdata/
 research/
 Config/Team.xcconfig
 Config/private-patterns.txt
+Config/Secrets.xcconfig
 graphify-out/

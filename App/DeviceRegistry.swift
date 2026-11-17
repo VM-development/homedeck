@@ -15,7 +15,7 @@ enum DeviceRegistry {
         DeviceKind(id: "mi-scale-s400", name: "Mi Body Composition Scale S400", symbol: "scalemass", link: .bluetooth,
                    featuresURL: MiScaleCatalog.featuresURL) { MiScaleDevice() },
         DeviceKind(id: "philips-ac2729", name: "Philips 2000i AC2729", symbol: "humidifier", link: .wifi,
-                   featuresURL: PhilipsAirCatalog.featuresURL) { UnbuiltDevice(name: "Philips 2000i AC2729") },
+                   featuresURL: PhilipsAirCatalog.featuresURL) { PhilipsAirDevice() },
         DeviceKind(id: "zeppelin-pro", name: "Zeppelin Pro Edition", symbol: "hifispeaker", link: .wifi,
                    featuresURL: ZeppelinCatalog.featuresURL) { UnbuiltDevice(name: "Zeppelin Pro Edition") },
         DeviceKind(id: "xiaomi-fan-2-pro", name: "Xiaomi Standing Fan 2 Pro", symbol: "fan.floor", link: .wifi,

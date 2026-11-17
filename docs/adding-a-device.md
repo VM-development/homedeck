@@ -2,7 +2,7 @@
 
 Each device is built by its own session, in its own git worktree, on branch `device/<id>` (for example `device/walkingpad-c2`). The session commits on that branch as it goes. Merging into `main` and every push wait for the owner's explicit yes, after the hub session's review.
 
-Worktree setup: the git-ignored `Config/Team.xcconfig` lives only in the main checkout. Before building for the phone, link it in: `ln -s <main checkout>/Config/Team.xcconfig Config/Team.xcconfig`. The privacy scan reads `Config/private-patterns.txt` from the main checkout too. Never create or edit that file in a worktree; if the scan says it is missing, ask the owner.
+Worktree setup: the git-ignored `Config/Team.xcconfig` and `Config/Secrets.xcconfig` live only in the main checkout. Before building for the phone, link them in: `ln -s <main checkout>/Config/Team.xcconfig Config/Team.xcconfig` (the same for `Secrets.xcconfig`). The privacy scan reads `Config/private-patterns.txt` from the main checkout too. Never create or edit that file in a worktree; if the scan says it is missing, ask the owner.
 
 A device session changes only:
 - `Packages/Sources/<Name>Kit/` and `Packages/Tests/<Name>KitTests/` (plus one test-target line in `Packages/Package.swift`);

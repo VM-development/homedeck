@@ -135,3 +135,11 @@ Article note: the one usability report from the test was about where a button ap
 **Conclusion:** All eight fan features work. Shared changes: `NSLocalNetworkUsageDescription` in `Info.plist` (unicast UDP needs no Bonjour types or multicast entitlement), and `BigButton` moved from the WalkingPad screen to `App/UI/Glass.swift` for its second user. A fresh worktree needs the git-ignored `Config/Team.xcconfig` copied in, or phone signing fails.
 **Next:** The owner's review and merge; then the next device.
 Article note: with the token extractor, the cloud sign-in planned as a shared wave-1 module wasn't needed for either Xiaomi device.
+
+## 2026-11-17: Philips 2000i AC2729
+
+**Tried:** Built the purifier module on branch `device/philips-ac2729` from the 2026-11-13 research, probing the owner's unit from the Mac first with the research's stdlib script.
+**Device answered:** See `docs/devices/philips-ac2729/journal.md`: like the fan, it was on another Wi-Fi at first; then its status subscriptions filled up during probing, which a restart cleared.
+**Conclusion:** All twelve purifier features work. Shared changes: `Config/Secrets.xcconfig` (git-ignored, with a `.example`) included from `Signing.xcconfig` and passed through `Info.plist` as `PhilipsLANSecret`, by the owner's choice to keep the vendor's fixed LAN secret out of the public repo; the secret is in the privacy-scan patterns. README and `adding-a-device.md` mention the new file.
+**Next:** The owner's review and merge; then the next device.
+Article note: on the second Wi-Fi device, "is it on the same network as the phone?" was again the first question to ask.

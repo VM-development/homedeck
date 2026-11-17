@@ -28,6 +28,8 @@
 	<string>Saves your weigh-ins from the scale: weight, BMI, body fat, lean mass and heart rate.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Talks to your Wi-Fi home devices, like the fan, on your home network.</string>
+	<key>PhilipsLANSecret</key>
+	<string>$(PHILIPS_LAN_SECRET)</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>

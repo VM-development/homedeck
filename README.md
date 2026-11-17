@@ -10,7 +10,7 @@ It isn't affiliated with any of the device makers.
 |---|---|---|
 | WalkingPad C2 | Bluetooth | Working |
 | Mi Body Composition Scale S400 | Bluetooth | Working |
-| Philips 2000i AC2729 | Wi-Fi | Planned |
+| Philips 2000i AC2729 | Wi-Fi | Working |
 | Bowers & Wilkins Zeppelin Pro Edition | Wi-Fi | Planned |
 | Xiaomi Smart Standing Fan 2 Pro | Wi-Fi | Working |
 | Dreame L40 Ultra | Wi-Fi | Planned |
@@ -30,6 +30,7 @@ You need Xcode 27 and an iPhone on iOS 26 or later.
 
 ```bash
 cp Config/Team.xcconfig.example Config/Team.xcconfig   # then put your team ID in it
+cp Config/Secrets.xcconfig.example Config/Secrets.xcconfig   # optional: the Philips LAN secret, see the file
 git config core.hooksPath hooks                         # privacy check before every push
 open HomeDeck.xcodeproj
 ```
