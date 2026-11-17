@@ -11,7 +11,7 @@ It isn't affiliated with any of the device makers.
 | WalkingPad C2 | Bluetooth | Working |
 | Mi Body Composition Scale S400 | Bluetooth | Working |
 | Philips 2000i AC2729 | Wi-Fi | Working |
-| Bowers & Wilkins Zeppelin Pro Edition | Wi-Fi | Planned |
+| Bowers & Wilkins Zeppelin Pro Edition | Wi-Fi | Working |
 | Xiaomi Smart Standing Fan 2 Pro | Wi-Fi | Working |
 | Dreame L40 Ultra | Wi-Fi | Planned |
 | AENO EK7S smart kettle | Bluetooth | Paused: needs a key from Tuya's cloud |

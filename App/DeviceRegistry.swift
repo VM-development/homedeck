@@ -17,7 +17,7 @@ enum DeviceRegistry {
         DeviceKind(id: "philips-ac2729", name: "Philips 2000i AC2729", symbol: "humidifier", link: .wifi,
                    featuresURL: PhilipsAirCatalog.featuresURL) { PhilipsAirDevice() },
         DeviceKind(id: "zeppelin-pro", name: "Zeppelin Pro Edition", symbol: "hifispeaker", link: .wifi,
-                   featuresURL: ZeppelinCatalog.featuresURL) { UnbuiltDevice(name: "Zeppelin Pro Edition") },
+                   featuresURL: ZeppelinCatalog.featuresURL) { ZeppelinDevice() },
         DeviceKind(id: "xiaomi-fan-2-pro", name: "Xiaomi Standing Fan 2 Pro", symbol: "fan.floor", link: .wifi,
                    featuresURL: XiaomiFanCatalog.featuresURL) { XiaomiFanDevice() },
         DeviceKind(id: "dreame-l40-ultra", name: "Dreame L40 Ultra", symbol: "circle.circle", link: .wifi,

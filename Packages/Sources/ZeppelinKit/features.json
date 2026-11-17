@@ -1,9 +1,9 @@
 [
-  { "id": "playback", "title": "Play, pause and skip", "status": "planned" },
-  { "id": "volume", "title": "Volume", "status": "planned" },
-  { "id": "now-playing", "title": "Now playing and source", "status": "planned" },
-  { "id": "eq", "title": "Bass and treble", "status": "planned" },
-  { "id": "light", "title": "Ambient light brightness", "status": "planned" },
-  { "id": "power-settings", "title": "Standby and auto-wake settings", "status": "planned" },
-  { "id": "firmware-update", "title": "Firmware update", "status": "planned" }
+  { "id": "playback", "title": "Play, pause and skip", "status": "working" },
+  { "id": "volume", "title": "Volume", "status": "working" },
+  { "id": "now-playing", "title": "Now playing and source", "status": "working" },
+  { "id": "eq", "title": "Bass and treble", "status": "working" },
+  { "id": "light", "title": "Light: on, brightness and colour", "status": "working" },
+  { "id": "power-settings", "title": "Auto standby", "status": "working" },
+  { "id": "firmware-update", "title": "Firmware version and update check", "status": "working" }
 ]

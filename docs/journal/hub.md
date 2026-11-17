@@ -151,3 +151,11 @@ Article note: on the second Wi-Fi device, "is it on the same network as the phon
 **Conclusion:** Paused by the owner's choice: they want to stay with the AENO app, and the remaining route (a full iPhone backup to look for the key in the AENO app's files) was declined. The catalog link changed from Wi-Fi to Bluetooth; README says "Paused".
 **Next:** The next device.
 Article note: the one device that needed a vendor cloud for its key, and no extractor exists for this white-label app, is where "no account" stopped.
+
+## 2026-11-17: Zeppelin Pro Edition
+
+**Tried:** Built the speaker module on branch `device/zeppelin-pro` from the 2026-11-13 research, probing the owner's speaker from the Mac first.
+**Device answered:** See `docs/devices/zeppelin-pro/journal.md`: on the right network from the start; one crash (an `%en0` address suffix) and one volume bug (a stale echo in the reply), both fixed.
+**Conclusion:** All seven speaker features work; firmware install untested (no update available). Shared changes: `NSBonjourServices` (`_eva-mesh._tcp`) and `NSAppTransportSecurity`/`NSAllowsLocalNetworking` in `Info.plist`; the round glass button moved from the WalkingPad screen to `App/UI/Glass.swift` as `RoundButton`.
+**Next:** The owner's review and merge; the Dreame L40 is the last device.
+Article note: asking "did you try X?" with the log open caught three untested features that had been reported as working.

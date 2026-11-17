@@ -165,3 +165,17 @@ struct BigButton: View {
         .glassEffect(enabled ? .clear.tint(tint.opacity(0.7)).interactive() : .clear, in: .capsule)
     }
 }
+
+/// Round glass button with a symbol, for steppers and transport controls.
+struct RoundButton: View {
+    let systemImage: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: systemImage).font(.title3.weight(.semibold)).frame(width: 48, height: 48).contentShape(.circle)
+        }
+        .buttonStyle(.plain)
+        .glassEffect(.clear.interactive(), in: .circle)
+    }
+}

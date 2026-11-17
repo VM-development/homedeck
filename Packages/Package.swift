@@ -14,6 +14,7 @@ let package = Package(
         .testTarget(name: "HubCoreTests", dependencies: ["HubCore"]),
         .testTarget(name: "WalkingPadKitTests", dependencies: ["WalkingPadKit"]),
         .testTarget(name: "MiScaleKitTests", dependencies: ["MiScaleKit"]),
+        .testTarget(name: "ZeppelinKitTests", dependencies: ["ZeppelinKit"]),
         .testTarget(name: "PhilipsAirKitTests", dependencies: ["PhilipsAirKit"]),
         .testTarget(name: "XiaomiFanKitTests", dependencies: ["XiaomiFanKit"]),
         .testTarget(name: "CatalogTests", dependencies: ["HubCore"] + kits.map { Target.Dependency.byName(name: $0) }),

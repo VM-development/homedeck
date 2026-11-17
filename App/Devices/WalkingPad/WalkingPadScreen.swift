@@ -67,7 +67,7 @@ struct WalkingPadScreen: View {
         GlassCard(title: "Speed") {
             let speed = pad.targetSpeed ?? live?.speed ?? 0
             HStack {
-                StepButton(systemImage: "minus") { pad.setSpeed(speed - 0.5) }
+                RoundButton(systemImage: "minus") { pad.setSpeed(speed - 0.5) }
                     .disabled(speed <= WalkingPad.speedRange.lowerBound)
                 Spacer()
                 Text("\(speed.formatted(.number.precision(.fractionLength(1)))) km/h")
@@ -75,7 +75,7 @@ struct WalkingPadScreen: View {
                     .contentTransition(.numericText(value: speed))
                     .animation(.smooth, value: speed)
                 Spacer()
-                StepButton(systemImage: "plus") { pad.setSpeed(speed + 0.5) }
+                RoundButton(systemImage: "plus") { pad.setSpeed(speed + 0.5) }
                     .disabled(speed >= WalkingPad.speedRange.upperBound)
             }
             .padding(.vertical, 8)
@@ -141,18 +141,5 @@ private struct Stat: View {
             Text(value ?? "–").font(.title3.weight(.semibold).monospacedDigit())
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
-private struct StepButton: View {
-    let systemImage: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Image(systemName: systemImage).font(.title3.weight(.semibold)).frame(width: 48, height: 48).contentShape(.circle)
-        }
-        .buttonStyle(.plain)
-        .glassEffect(.clear.interactive(), in: .circle)
     }
 }
