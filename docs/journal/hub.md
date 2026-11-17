@@ -119,3 +119,11 @@ Article note: the research pass left ten open questions; three short tests on th
 **Conclusion:** All six scale features work. Shared changes this device needed: `HubCore/Keychain.swift` (device secrets; the spec had planned it inside XiaomiCloudKit), the HealthKit entitlement, and the Health usage texts in `Info.plist`. The bind key comes from the owner running Xiaomi Cloud Tokens Extractor, so HomeDeck has no Xiaomi sign-in yet; the fan's token came from the same run.
 **Next:** The owner's review and merge; then the next device.
 Article note: the owner pasted the extractor's whole output (keys, tokens, MACs) into the chat. Nothing was written to the repo; the values went into the git-ignored privacy-scan patterns so a commit containing them is refused.
+
+## 2026-11-17: Scale profiles
+
+**Tried:** The owner asked for a simple way to add several people to the scale. Added "Add person", moving a weigh-in between people, and removing a person, on branch `device/mi-scale-s400`; tested on the owner's iPhone.
+**Device answered:** All three work. The owner flagged the Remove confirmation appearing in a corner; it is now a centred alert with Cancel.
+**Conclusion:** No shared files changed. Open: the scale's number for a second real person is still unverified.
+**Next:** The owner's review and merge.
+Article note: the one usability report from the test was about where a button appeared, not about what it did.

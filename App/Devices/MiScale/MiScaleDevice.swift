@@ -246,6 +246,33 @@ final class MiScaleDevice: NSObject, HomeDevice {
         people.removeAll { $0.id == person.id }
         people.append(person)
         people.sort { $0.id < $1.id }
+        savePeople()
+    }
+
+    /// The id for a person added in HomeDeck. ponytail: ids double as the scale's numbers, so a person added
+    /// second gets the scale's person 2; matching by weight would decouple them if the scale's numbers don't fit.
+    var nextPersonID: Int { (profileIDs.max() ?? 0) + 1 }
+
+    /// Their weigh-ins move to Guest, from where they can be moved back.
+    func remove(_ id: Int) {
+        people.removeAll { $0.id == id }
+        savePeople()
+        for i in weighIns.indices where weighIns[i].profileID == id { weighIns[i].profileID = 0 }
+        saveWeighIns()
+        log.add("removed profile \(id)")
+    }
+
+    /// The scale can pick the wrong person, or nobody (Guest): the owner moves the weigh-in by hand.
+    /// ponytail: a weigh-in already in Apple Health stays there; delete it in Health if it was someone else's.
+    func move(_ weighIn: WeighIn, to id: Int) {
+        guard let index = weighIns.firstIndex(where: { $0.scaleTime == weighIn.scaleTime }) else { return }
+        weighIns[index].profileID = id
+        saveWeighIns()
+        log.add("weigh-in moved to profile \(id)")
+        Task { await saveToHealth(weighIn.scaleTime) }
+    }
+
+    private func savePeople() {
         defaults.set(try? JSONEncoder().encode(people), forKey: Self.peopleKey)
     }
 

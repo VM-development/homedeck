@@ -32,3 +32,10 @@ Entries are only ever appended; dead ends stay. No real names, addresses, keys o
 **Conclusion:** All six features work (verified on device). Body composition is an estimate; it hasn't been compared with Xiaomi Home's figures.
 **Next:** Hub review and merge. Open: a locked-phone weigh-in (background capture) and a comparison with Xiaomi Home's body composition.
 Article note: the key question from the research, "how does an iPhone get the MAC it can't see?", had the simplest answer: the scale says it out loud in its first, unencrypted frame.
+
+## 2026-11-17: More people on one scale
+
+**Tried:** "Add person" in the People card (the next free number, so the second person added matches the scale's person 2), tapping a weigh-in to move it to another person or to Guest, a Guest chip when there are guest weigh-ins, and Remove in the person editor (their weigh-ins move to Guest). The owner first saw the Remove confirmation in the top-left corner (a confirmation dialog anchored to the whole form), so it became a centred alert with Cancel and Remove.
+**Device answered:** On the owner's iPhone: a person added and named, a weigh-in moved to them and shown under their chip, the person removed after the alert. The log kept "removed profile 2"; the move lines had been trimmed by then, because the WalkingPad's polling fills the 500-line log.
+**Conclusion:** Profiles work (owner verified on screen). Not checked: which number the scale gives a second real person. If it marks everyone as person 1 or as Guest, weigh-ins have to be moved by hand until HomeDeck matches people by weight.
+**Next:** Weigh a second person and read the profile number from the log.
