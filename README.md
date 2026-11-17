@@ -13,7 +13,7 @@ It isn't affiliated with any of the device makers.
 | Philips 2000i AC2729 | Wi-Fi | Working |
 | Bowers & Wilkins Zeppelin Pro Edition | Wi-Fi | Working |
 | Xiaomi Smart Standing Fan 2 Pro | Wi-Fi | Working |
-| Dreame L40 Ultra | Wi-Fi | Planned |
+| Dreame L40 Ultra CE | Wi-Fi (Dreame cloud) | Working: controls; rooms, map, schedules planned |
 | AENO EK7S smart kettle | Bluetooth | Paused: needs a key from Tuya's cloud |
 
 The app's Market tab shows every feature of every device and whether it works yet. The Noble FoKus Rex5 earbuds keep their own [REX5 app](https://github.com/VM-development/noble-rex5-custom-app).
@@ -30,7 +30,7 @@ You need Xcode 27 and an iPhone on iOS 26 or later.
 
 ```bash
 cp Config/Team.xcconfig.example Config/Team.xcconfig   # then put your team ID in it
-cp Config/Secrets.xcconfig.example Config/Secrets.xcconfig   # optional: the Philips LAN secret, see the file
+cp Config/Secrets.xcconfig.example Config/Secrets.xcconfig   # optional: Philips and Dreame constants, see the file
 git config core.hooksPath hooks                         # privacy check before every push
 open HomeDeck.xcodeproj
 ```

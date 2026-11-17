@@ -21,7 +21,7 @@ enum DeviceRegistry {
         DeviceKind(id: "xiaomi-fan-2-pro", name: "Xiaomi Standing Fan 2 Pro", symbol: "fan.floor", link: .wifi,
                    featuresURL: XiaomiFanCatalog.featuresURL) { XiaomiFanDevice() },
         DeviceKind(id: "dreame-l40-ultra", name: "Dreame L40 Ultra", symbol: "circle.circle", link: .wifi,
-                   featuresURL: DreameCatalog.featuresURL) { UnbuiltDevice(name: "Dreame L40 Ultra") },
+                   featuresURL: DreameCatalog.featuresURL) { DreameDevice() },
         DeviceKind(id: "aeno-ek7s", name: "AENO EK7S Kettle", symbol: "cup.and.saucer", link: .bluetooth,
                    featuresURL: AenoCatalog.featuresURL) { UnbuiltDevice(name: "AENO EK7S Kettle") },
     ]

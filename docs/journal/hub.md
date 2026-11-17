@@ -159,3 +159,11 @@ Article note: the one device that needed a vendor cloud for its key, and no extr
 **Conclusion:** All seven speaker features work; firmware install untested (no update available). Shared changes: `NSBonjourServices` (`_eva-mesh._tcp`) and `NSAppTransportSecurity`/`NSAllowsLocalNetworking` in `Info.plist`; the round glass button moved from the WalkingPad screen to `App/UI/Glass.swift` as `RoundButton`.
 **Next:** The owner's review and merge; the Dreame L40 is the last device.
 Article note: asking "did you try X?" with the log open caught three untested features that had been reported as working.
+
+## 2026-11-17: Dreame L40 Ultra CE
+
+**Tried:** Built the robot module on branch `device/dreame-l40` through the Dreamehome cloud, after checking the owner's Dreamehome 2.6.7.0 APK still carries the open-source clients' constants.
+**Device answered:** See `docs/devices/dreame-l40/journal.md`: model `r5021a`; seven features verified on the robot; mop functions untestable (broken water tank).
+**Conclusion:** First cloud device. Shared changes: three Dreame constants added to the git-ignored `Config/Secrets.xcconfig` (and its `.example`), passed through `Info.plist` as `DreameSalt`, `DreameBasic`, `DreameKey`; they are in the privacy-scan patterns. The Dreamehome session (tokens only, no password) is stored in the Keychain.
+**Next:** The owner's review and merge; rooms and map as a follow-up.
+Article note: six devices in a day, and four of them needed one thing before any protocol work: being on the right network or in the right app.
