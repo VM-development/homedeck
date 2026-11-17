@@ -183,3 +183,11 @@ Article note: the room picker that worked was the map itself. The rooms had no n
 **Conclusion:** `docs/article/draft.md` is written for the owner to edit. Checking it against the sources removed four claims the sources don't support: "replaced six apps" (the six working devices use five vendor apps, and they are still needed for Wi-Fi setup), the kettle's Bluetooth as a fact (it is the owner's report, no scan), research "for every device" on day one (the kettle came two days later), and the research's wrong claims all being guesses (some came from open source or the spec). The HomeDeck repo link is a placeholder until the public repo exists.
 **Next:** The owner edits and publishes.
 Article note: an article drafted from evidence labels inherits their honesty only if every sentence is checked back against them; the first draft overclaimed four times.
+
+## 2026-11-17: Add-device skill
+
+**Tried:** Distilled `docs/adding-a-device.md`, this journal and the seven device journals and protocol docs into a Claude skill, `.claude/skills/add-device/SKILL.md`, with a small `mask.py` beside it that masks private values in anything a session prints, using the privacy scan's own pattern matching (the patterns file is never printed).
+**Device answered:** n/a.
+**Conclusion:** The skill covers research with evidence labels, probing from the Mac first, the kit, tests, device class and screen, the phone loop (`xcodebuild` to the phone, `devicectl` install, launch and log pull), finishing, the branch rules, and a table of what the devices did (wrong Wi-Fi, replies that echo stale values, full subscription slots, `%en0` addresses). It updates the checklist in two places: a fresh worktree copies the git-ignored config files in, and merges go into `phase-0-shell` while `main` doesn't exist. `mask.py --self-test` passes; a fresh agent applied the skill to a made-up device as a check.
+**Next:** Wave 2 uses the skill and refines it.
+Article note: across seven devices the most repeated lesson wasn't about protocols: first check the device is where the phone can reach it, and let the log, not the memory of the test, decide what works.
