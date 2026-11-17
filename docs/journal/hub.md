@@ -127,3 +127,11 @@ Article note: the owner pasted the extractor's whole output (keys, tokens, MACs)
 **Conclusion:** No shared files changed. Open: the scale's number for a second real person is still unverified.
 **Next:** The owner's review and merge.
 Article note: the one usability report from the test was about where a button appeared, not about what it did.
+
+## 2026-11-17: Xiaomi Fan 2 Pro
+
+**Tried:** Built the fan module on branch `device/xiaomi-fan-2-pro` from the 2026-11-13 research, with the token and IP from the extractor the owner already ran for the scale. No Xiaomi sign-in in the app.
+**Device answered:** See `docs/devices/xiaomi-fan-2-pro/journal.md`: the fan had to move to the phone's Wi-Fi first; after that every feature worked on the first try.
+**Conclusion:** All eight fan features work. Shared changes: `NSLocalNetworkUsageDescription` in `Info.plist` (unicast UDP needs no Bonjour types or multicast entitlement), and `BigButton` moved from the WalkingPad screen to `App/UI/Glass.swift` for its second user. A fresh worktree needs the git-ignored `Config/Team.xcconfig` copied in, or phone signing fails.
+**Next:** The owner's review and merge; then the next device.
+Article note: with the token extractor, the cloud sign-in planned as a shared wave-1 module wasn't needed for either Xiaomi device.

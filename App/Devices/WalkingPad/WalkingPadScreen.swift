@@ -144,27 +144,6 @@ private struct Stat: View {
     }
 }
 
-/// Full-width tinted glass button.
-private struct BigButton: View {
-    let title: String
-    let systemImage: String
-    let tint: Color
-    let action: () -> Void
-    @Environment(\.isEnabled) private var enabled
-
-    var body: some View {
-        Button(action: action) {
-            Label(title, systemImage: systemImage)
-                .font(.headline)
-                .foregroundStyle(enabled ? .white : .secondary)
-                .frame(maxWidth: .infinity, minHeight: 52)
-                .contentShape(.capsule)
-        }
-        .buttonStyle(.plain)
-        .glassEffect(enabled ? .clear.tint(tint.opacity(0.7)).interactive() : .clear, in: .capsule)
-    }
-}
-
 private struct StepButton: View {
     let systemImage: String
     let action: () -> Void

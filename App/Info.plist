@@ -26,6 +26,8 @@
 	<string>HomeDeck only saves weigh-ins to Apple Health; it doesn't read your health data.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Saves your weigh-ins from the scale: weight, BMI, body fat, lean mass and heart rate.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Talks to your Wi-Fi home devices, like the fan, on your home network.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>

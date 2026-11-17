@@ -144,3 +144,24 @@ struct GlassChip: View {
         .glassEffect(selected ? .clear.tint(.blue.opacity(0.7)).interactive() : .clear.interactive(), in: .capsule)
     }
 }
+
+/// Full-width tinted glass button for a screen's main action.
+struct BigButton: View {
+    let title: String
+    let systemImage: String
+    let tint: Color
+    let action: () -> Void
+    @Environment(\.isEnabled) private var enabled
+
+    var body: some View {
+        Button(action: action) {
+            Label(title, systemImage: systemImage)
+                .font(.headline)
+                .foregroundStyle(enabled ? .white : .secondary)
+                .frame(maxWidth: .infinity, minHeight: 52)
+                .contentShape(.capsule)
+        }
+        .buttonStyle(.plain)
+        .glassEffect(enabled ? .clear.tint(tint.opacity(0.7)).interactive() : .clear, in: .capsule)
+    }
+}

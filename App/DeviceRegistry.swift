@@ -19,7 +19,7 @@ enum DeviceRegistry {
         DeviceKind(id: "zeppelin-pro", name: "Zeppelin Pro Edition", symbol: "hifispeaker", link: .wifi,
                    featuresURL: ZeppelinCatalog.featuresURL) { UnbuiltDevice(name: "Zeppelin Pro Edition") },
         DeviceKind(id: "xiaomi-fan-2-pro", name: "Xiaomi Standing Fan 2 Pro", symbol: "fan.floor", link: .wifi,
-                   featuresURL: XiaomiFanCatalog.featuresURL) { UnbuiltDevice(name: "Xiaomi Standing Fan 2 Pro") },
+                   featuresURL: XiaomiFanCatalog.featuresURL) { XiaomiFanDevice() },
         DeviceKind(id: "dreame-l40-ultra", name: "Dreame L40 Ultra", symbol: "circle.circle", link: .wifi,
                    featuresURL: DreameCatalog.featuresURL) { UnbuiltDevice(name: "Dreame L40 Ultra") },
         DeviceKind(id: "aeno-ek7s", name: "AENO EK7S Kettle", symbol: "cup.and.saucer", link: .wifi,

@@ -12,7 +12,7 @@ It isn't affiliated with any of the device makers.
 | Mi Body Composition Scale S400 | Bluetooth | Working |
 | Philips 2000i AC2729 | Wi-Fi | Planned |
 | Bowers & Wilkins Zeppelin Pro Edition | Wi-Fi | Planned |
-| Xiaomi Smart Standing Fan 2 Pro | Wi-Fi | Planned |
+| Xiaomi Smart Standing Fan 2 Pro | Wi-Fi | Working |
 | Dreame L40 Ultra | Wi-Fi | Planned |
 | AENO EK7S smart kettle | Wi-Fi | Planned |
 
