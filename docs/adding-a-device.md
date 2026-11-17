@@ -1,8 +1,8 @@
 # Adding a device
 
-Each device is built by its own session, in its own git worktree, on branch `device/<id>` (for example `device/walkingpad-c2`). The session commits on that branch as it goes. Merging into `main` and every push wait for the owner's explicit yes, after the hub session's review.
+Each device is built by its own session, in its own git worktree, on branch `device/<id>` (for example `device/walkingpad-c2`). The session commits on that branch as it goes. Merging into `phase-0-shell` (the integration branch until `main` exists) and every push wait for the owner's explicit yes, after the hub session's review. The `add-device` skill (`.claude/skills/add-device/`) adds the commands and the lessons from the first devices.
 
-Worktree setup: the git-ignored `Config/Team.xcconfig` and `Config/Secrets.xcconfig` live only in the main checkout. Before building for the phone, link them in: `ln -s <main checkout>/Config/Team.xcconfig Config/Team.xcconfig` (the same for `Secrets.xcconfig`). The privacy scan reads `Config/private-patterns.txt` from the main checkout too. Never create or edit that file in a worktree; if the scan says it is missing, ask the owner.
+Worktree setup: the git-ignored `Config/Team.xcconfig` and `Config/Secrets.xcconfig` live only in the main checkout. Before building for the phone, copy them in: `cp <main checkout>/Config/Team.xcconfig <main checkout>/Config/Secrets.xcconfig Config/`. A new vendor constant goes into both copies, so it survives the merge. The privacy scan reads `Config/private-patterns.txt` from the main checkout too. Never create or edit that file in a worktree; if the scan says it is missing, ask the owner.
 
 A device session changes only:
 - `Packages/Sources/<Name>Kit/` and `Packages/Tests/<Name>KitTests/` (plus one test-target line in `Packages/Package.swift`);
