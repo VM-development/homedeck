@@ -17,6 +17,15 @@ struct XiaomiFanScreen: View {
         }
         .navigationTitle("Fan 2 Pro")
         .task(id: fan.isSetUp) { if fan.isSetUp { await fan.watch() } }
+        .toolbar {
+            if fan.isSetUp {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu("More", systemImage: "ellipsis.circle") {
+                        Button("Change token or IP", systemImage: "key", role: .destructive) { confirmForget = true }
+                    }
+                }
+            }
+        }
         .alert("Remove the token and IP?", isPresented: $confirmForget) {
             Button("Cancel", role: .cancel) {}
             Button("Remove", role: .destructive, action: fan.forget)
@@ -52,21 +61,18 @@ struct XiaomiFanScreen: View {
     // MARK: Controls
 
     @ViewBuilder private var controls: some View {
-        GlassCard {
-            CardRow(title: fan.status.cardLine, systemImage: fan.state == nil ? "wifi.slash" : "wifi")
-            if case .offline(let reason?) = fan.status { CardCaption(reason).padding(.bottom, 8) }
+        let s = fan.state
+        DeviceHeader(symbol: "fan.floor", title: s.map { $0.power ? "On · speed \($0.level)" : "Off" } ?? fan.status.cardLine,
+                     subtitle: subtitle) {
+            if let s {
+                RoundButton(title: s.power ? "Turn off" : "Turn on", systemImage: "power", tint: s.power ? .green : nil) {
+                    fan.setPower(!s.power)
+                }
+                .feature("power")
+            }
         }
 
-        if let s = fan.state {
-            Group {
-                if s.power {
-                    BigButton(title: "Turn off", systemImage: "power", tint: .red) { fan.set(.power, false) { $0.power = false } }
-                } else {
-                    BigButton(title: "Turn on", systemImage: "power", tint: .green) { fan.set(.power, true) { $0.power = true } }
-                }
-            }
-            .feature("power")
-
+        if let s {
             GlassCard(title: "Speed") {
                 GlassSegments(options: Fan.levels, title: { "\($0)" }, selection: s.level) { level in
                     fan.set(.level, level) { $0.level = level }
@@ -80,80 +86,70 @@ struct XiaomiFanScreen: View {
                     }
                     Text("\(Int(shownSpeed)) %").monospacedDigit().frame(width: 52, alignment: .trailing)
                 }
-                .padding(.vertical, 10)
+                .padding(.vertical, 8)
             }
             .feature("speed")
 
-            GlassCard(title: "Mode") {
-                GlassSegments(options: [false, true], title: { $0 ? "Natural breeze" : "Direct" }, selection: s.natural) { natural in
+            GlassCard {
+                MenuRow(title: "Mode", systemImage: "wind", options: [false, true], label: { $0 ? "Natural breeze" : "Direct" },
+                        selection: s.natural) { natural in
                     fan.set(.mode, natural ? 1 : 0) { $0.natural = natural }
                 }
-                .padding(.vertical, 10)
-            }
-            .feature("mode")
-
-            GlassCard(title: "Oscillation") {
-                Toggle("Oscillate", isOn: toggle(.swing, \.swing))
-                    .padding(.vertical, 6)
-                GlassSegments(options: Fan.angles, title: { "\($0)°" }, selection: s.angle) { angle in
-                    fan.set(.angle, angle) { $0.angle = angle }
-                }
-                .padding(.bottom, 10)
-            }
-            .feature("oscillation")
-
-            GlassCard(title: "Timer") {
-                GlassSegments(options: [0, 30, 60, 120, 240, 480], title: timerTitle, selection: s.timer == 0 ? 0 : nil) { minutes in
+                .feature("mode")
+                MenuRow(title: "Oscillate", systemImage: "arrow.left.and.right", options: [0] + Fan.angles,
+                        label: { $0 == 0 ? "Off" : "\($0)°" }, selection: s.swing ? s.angle : 0, onSelect: oscillate)
+                    .feature("oscillation")
+                MenuRow(title: "Timer", systemImage: "timer", options: [0, 30, 60, 120, 240, 480], label: timerTitle,
+                        selection: s.timer == 0 ? 0 : nil, value: s.timer > 0 ? "\(left(s.timer)) left" : nil) { minutes in
                     fan.set(.timer, minutes) { $0.timer = minutes }
                 }
-                .padding(.vertical, 10)
-                if s.timer > 0 {
-                    CardCaption("Turns off in \(Duration.seconds(s.timer * 60).formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))).")
-                        .padding(.bottom, 8)
-                }
+                .feature("timer")
             }
-            .feature("timer")
 
-            GlassCard {
-                Toggle(isOn: toggle(.lock, \.lock)) {
-                    Label("Child lock", systemImage: "lock")
-                }
-                .padding(.vertical, 6)
-                .feature("child-lock")
-                Toggle(isOn: toggle(.light, \.light)) {
-                    Label("Indicator light", systemImage: "lightbulb")
-                }
-                .padding(.vertical, 6)
-                .feature("light")
-                Toggle(isOn: toggle(.sound, \.sound)) {
-                    Label("Beep", systemImage: "speaker.wave.2")
-                }
-                .padding(.vertical, 6)
-                .feature("sound")
+            TileRow {
+                ToggleTile(title: "Child lock", systemImage: "lock", isOn: s.lock) { flip(.lock, \.lock) }.feature("child-lock")
+                ToggleTile(title: "Light", systemImage: "lightbulb", isOn: s.light) { flip(.light, \.light) }.feature("light")
+                ToggleTile(title: "Beep", systemImage: "speaker.wave.2", isOn: s.sound) { flip(.sound, \.sound) }.feature("sound")
             }
 
             if s.fault != 0 { CardCaption("The fan reports motor fault \(s.fault).").foregroundStyle(.red) }
         }
         if let refused = fan.refused { CardCaption(refused).foregroundStyle(.red) }
         CardCaption("The fan answers only on your home Wi-Fi.")
-
-        Button("Change token or IP", role: .destructive) { confirmForget = true }
-            .padding(.top, 8)
     }
 
-    /// Bindings read the fan's live state: a copy captured when the body ran would show the old value
-    /// for a moment after each change.
+    /// The offline reason, or what the fan is doing while it's on.
+    private var subtitle: String? {
+        if case .offline(let reason?) = fan.status { return reason }
+        guard let s = fan.state, s.power else { return nil }
+        return [s.natural ? "Natural breeze" : "Direct", s.swing ? "oscillating \(s.angle)°" : nil].compactMap { $0 }.joined(separator: " · ")
+    }
+
+    /// Off stops oscillating; an angle also starts it.
+    private func oscillate(_ angle: Int) {
+        guard angle != 0 else { return fan.set(.swing, false) { $0.swing = false } }
+        if fan.state?.swing != true { fan.set(.swing, true) { $0.swing = true } }
+        fan.set(.angle, angle) { $0.angle = angle }
+    }
+
+    /// Reads the live state, so quick taps don't act on a value from before the last change.
+    private func flip(_ property: Fan.Property, _ key: WritableKeyPath<Fan.State, Bool>) {
+        let on = !(fan.state?[keyPath: key] ?? false)
+        fan.set(property, on) { $0[keyPath: key] = on }
+    }
+
+    /// The slider's value: while dragging, the finger's; otherwise the fan's live speed.
     private var shownSpeed: Double { dragged ?? Double(fan.state?.speed ?? 1) }
 
-    private func toggle(_ property: Fan.Property, _ key: WritableKeyPath<Fan.State, Bool>) -> Binding<Bool> {
-        Binding { fan.state?[keyPath: key] ?? false } set: { on in fan.set(property, on) { $0[keyPath: key] = on } }
+    private func left(_ minutes: Int) -> String {
+        Duration.seconds(minutes * 60).formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))
     }
 
     private func timerTitle(_ minutes: Int) -> String {
         switch minutes {
         case 0: "Off"
-        case 30: "30m"
-        default: "\(minutes / 60)h"
+        case 30: "30 min"
+        default: "\(minutes / 60) h"
         }
     }
 }

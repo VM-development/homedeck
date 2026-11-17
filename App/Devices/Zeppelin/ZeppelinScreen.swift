@@ -18,6 +18,15 @@ struct ZeppelinScreen: View {
             if speaker.isSetUp { controls } else { setup }
         }
         .navigationTitle("Zeppelin Pro")
+        .toolbar {
+            if speaker.isSetUp {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu("More", systemImage: "ellipsis.circle") {
+                        Button("Change speaker", systemImage: "arrow.triangle.2.circlepath", role: .destructive) { confirmForget = true }
+                    }
+                }
+            }
+        }
         .alert("Forget this speaker?", isPresented: $confirmForget) {
             Button("Cancel", role: .cancel) {}
             Button("Forget", role: .destructive, action: speaker.forget)
@@ -67,45 +76,33 @@ struct ZeppelinScreen: View {
     // MARK: Controls
 
     @ViewBuilder private var controls: some View {
-        GlassCard {
-            CardRow(title: speaker.status.cardLine, systemImage: speaker.volume == nil ? "wifi.slash" : "wifi")
-            if case .offline(let reason?) = speaker.status { CardCaption(reason).padding(.bottom, 8) }
-        }
-
-        if speaker.volume != nil {
-            GlassCard(title: "Now playing") {
-                VStack(alignment: .leading, spacing: 4) {
-                    if let playing = speaker.nowPlaying {
-                        Text(playing.title.isEmpty ? playing.service : playing.title).font(.headline)
-                        Text([playing.artist, playing.album].filter { !$0.isEmpty }.joined(separator: " · ")).foregroundStyle(.secondary)
-                        if playing.durationMs > 0 {
-                            ProgressView(value: Double(min(playing.elapsedMs, playing.durationMs)), total: Double(playing.durationMs))
-                                .padding(.top, 6)
-                        }
-                        Text(playing.service).font(.footnote).foregroundStyle(.secondary)
-                    } else {
-                        Text("Nothing playing").foregroundStyle(.secondary)
-                    }
-                }
-                .padding(.vertical, 10)
-            }
+        let playing = speaker.nowPlaying
+        DeviceHeader(symbol: "hifispeaker", title: headerTitle, subtitle: headerSubtitle)
             .feature("now-playing")
 
-            HStack(spacing: 24) {
-                RoundButton(title: "Previous track", systemImage: "backward.fill") { speaker.press(.previous) }
-                RoundButton(title: speaker.nowPlaying?.state == 1 ? "Pause" : "Play", systemImage: speaker.nowPlaying?.state == 1 ? "pause.fill" : "play.fill") { speaker.press(.playPause) }
-                RoundButton(title: "Next track", systemImage: "forward.fill") { speaker.press(.next) }
-            }
-            .disabled(speaker.nowPlaying == nil)
-            .frame(maxWidth: .infinity)
-            .feature("playback")
-
-            GlassCard(title: "Volume") {
+        if speaker.volume != nil {
+            GlassCard {
+                if let playing, playing.durationMs > 0 {
+                    ProgressView(value: Double(min(playing.elapsedMs, playing.durationMs)), total: Double(playing.durationMs))
+                        .padding(.top, 12)
+                        .feature("now-playing")
+                }
+                HStack(spacing: 28) {
+                    RoundButton(title: "Previous track", systemImage: "backward.fill") { speaker.press(.previous) }
+                    RoundButton(title: playing?.state == 1 ? "Pause" : "Play", systemImage: playing?.state == 1 ? "pause.fill" : "play.fill",
+                                tint: .blue) { speaker.press(.playPause) }
+                    RoundButton(title: "Next track", systemImage: "forward.fill") { speaker.press(.next) }
+                }
+                .disabled(playing == nil)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .feature("playback")
                 HStack {
-                    Button(action: speaker.toggleMute) {
-                        Image(systemName: speaker.muted ? "speaker.slash.fill" : "speaker.wave.2.fill").frame(width: 28)
-                    }
-                    .buttonStyle(.plain)
+                    Button(speaker.muted ? "Unmute" : "Mute", systemImage: speaker.muted ? "speaker.slash.fill" : "speaker.wave.2.fill",
+                           action: speaker.toggleMute)
+                        .labelStyle(.iconOnly)
+                        .frame(width: 44, height: 44)
+                        .buttonStyle(.plain)
                     Slider(value: Binding { draggedVolume ?? Double(speaker.volume ?? 0) } set: { draggedVolume = $0 }, in: 0...100, step: 1) { editing in
                         guard !editing, let value = draggedVolume else { return }
                         speaker.setVolume(Int(value))
@@ -113,25 +110,46 @@ struct ZeppelinScreen: View {
                     }
                     Text("\(Int(draggedVolume ?? Double(speaker.volume ?? 0)))").monospacedDigit().frame(width: 36, alignment: .trailing)
                 }
-                .padding(.vertical, 10)
+                .padding(.bottom, 6)
+                .feature("volume")
             }
-            .feature("volume")
 
-            GlassCard(title: "Sound") {
-                Stepper("Bass \(decibels(speaker.bass))", value: Binding { (speaker.bass ?? 0) / 100 } set: { speaker.setBass($0 * 100) }, in: -6...6)
-                    .padding(.vertical, 6)
-                Stepper("Treble \(decibels(speaker.treble))", value: Binding { (speaker.treble ?? 0) / 100 } set: { speaker.setTreble($0 * 100) }, in: -6...6)
-                    .padding(.vertical, 6)
+            GlassCard {
+                MenuRow(title: "Bass", systemImage: "speaker.wave.1", options: Array(-6...6), label: decibels, selection: speaker.bass.map { $0 / 100 }) {
+                    speaker.setBass($0 * 100)
+                }
+                .feature("eq")
+                MenuRow(title: "Treble", systemImage: "speaker.wave.3", options: Array(-6...6), label: decibels, selection: speaker.treble.map { $0 / 100 }) {
+                    speaker.setTreble($0 * 100)
+                }
+                .feature("eq")
+                MenuRow(title: "Auto standby", systemImage: "moon.zzz", options: StreamSDK.autoStandbyChoices,
+                        label: { $0 == 0 ? "Never" : "After \($0 / 60) min" }, selection: speaker.autoStandby, onSelect: speaker.setAutoStandby)
+                    .feature("power-settings")
+                Group {
+                    if let update = speaker.update, update.available {
+                        CardButton(title: "Install \(update.version.isEmpty ? "update" : update.version)", systemImage: "arrow.down.circle") { confirmUpdate = true }
+                    } else if speaker.update != nil {
+                        CardRow(title: "Software", detail: "\(speaker.version ?? "") · up to date", systemImage: "checkmark.circle")
+                    } else {
+                        CardButton(title: "Software", detail: speaker.version.map { "\($0) · check" } ?? "Check", systemImage: "arrow.triangle.2.circlepath",
+                                   action: speaker.checkForUpdate)
+                    }
+                }
+                .feature("firmware-update")
             }
-            .feature("eq")
 
             if let light = speaker.light {
                 GlassCard(title: "Light") {
-                    Toggle("Light", isOn: Binding { speaker.light?.enabled ?? false } set: { on in
-                        var changed = light
-                        changed.enabled = on
-                        speaker.setLight(changed)
-                    })
+                    HStack {
+                        Toggle("Light", isOn: Binding { speaker.light?.enabled ?? false } set: { on in
+                            var changed = light
+                            changed.enabled = on
+                            speaker.setLight(changed)
+                        })
+                        ColorPicker("Colour", selection: Binding { color(light) } set: { speaker.setLight(with($0, light)) }, supportsOpacity: false)
+                            .labelsHidden()
+                    }
                     .padding(.vertical, 6)
                     Slider(value: Binding { draggedBrightness ?? light.brightness } set: { draggedBrightness = $0 }, in: 0.01...1) { editing in
                         guard !editing, let value = draggedBrightness else { return }
@@ -140,47 +158,31 @@ struct ZeppelinScreen: View {
                         speaker.setLight(changed)
                         draggedBrightness = nil
                     }
-                    ColorPicker("Colour", selection: Binding { color(light) } set: { speaker.setLight(with($0, light)) }, supportsOpacity: false)
-                        .padding(.vertical, 6)
+                    .accessibilityLabel("Brightness")
+                    .padding(.vertical, 8)
                 }
                 .feature("light")
                 CardCaption("The speaker switches the light off when it goes to standby.").feature("light")
             }
-
-            GlassCard(title: "Auto standby") {
-                GlassSegments(options: StreamSDK.autoStandbyChoices, title: { $0 == 0 ? "Never" : "\($0 / 60)m" },
-                              selection: speaker.autoStandby, onSelect: speaker.setAutoStandby)
-                    .padding(.vertical, 10)
-                CardCaption("How long the speaker waits, with nothing playing, before going to standby.").padding(.bottom, 8)
-            }
-            .feature("power-settings")
-
-            GlassCard(title: "Software") {
-                CardRow(title: "Version", detail: speaker.version ?? "–")
-                if let update = speaker.update {
-                    if update.available {
-                        CardButton(title: "Install \(update.version.isEmpty ? "update" : update.version)", systemImage: "arrow.down.circle") { confirmUpdate = true }
-                    } else {
-                        CardRow(title: "Up to date", systemImage: "checkmark.circle")
-                    }
-                } else {
-                    CardButton(title: "Check for updates", systemImage: "arrow.triangle.2.circlepath", action: speaker.checkForUpdate)
-                }
-            }
-            .feature("firmware-update")
         }
         if let problem = speaker.problem { CardCaption(problem).foregroundStyle(.red) }
         CardCaption("The speaker answers only on your home Wi-Fi.")
-
-        Button("Change speaker", role: .destructive) { confirmForget = true }
-            .padding(.top, 8)
     }
 
-    private func decibels(_ hundredths: Int?) -> String {
-        guard let hundredths else { return "–" }
-        let db = hundredths / 100
-        return db > 0 ? "+\(db) dB" : "\(db) dB"
+    private var headerTitle: String {
+        guard speaker.volume != nil else { return speaker.status.cardLine }
+        guard let playing = speaker.nowPlaying else { return "Nothing playing" }
+        return playing.title.isEmpty ? playing.service : playing.title
     }
+
+    private var headerSubtitle: String? {
+        if case .offline(let reason?) = speaker.status { return reason }
+        guard let playing = speaker.nowPlaying else { return nil }
+        return ([playing.artist] + [playing.service]).filter { !$0.isEmpty }.joined(separator: " · ")
+    }
+
+    private func decibels(_ db: Int) -> String { db > 0 ? "+\(db) dB" : "\(db) dB" }
+
 
     private func color(_ light: Stated.Light) -> Color {
         Color(red: Double(light.red) / 255, green: Double(light.green) / 255, blue: Double(light.blue) / 255)

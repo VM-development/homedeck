@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// The tint of selected segments and chips.
-private let selectedTint = Color.blue.opacity(0.7)
+/// The tint of selected segments, chips and tiles.
+let selectedTint = Color.blue.opacity(0.7)
 
 /// A scrolling screen of glass cards on the grouped background.
 struct GlassScreen<Content: View>: View {
@@ -46,6 +46,8 @@ struct CardRow: View {
     var detail: String? = nil
     var systemImage: String? = nil
     var chevron = false
+    /// Up-down chevrons: the row opens a menu.
+    var menu = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -55,9 +57,9 @@ struct CardRow: View {
             Text(title)
             Spacer(minLength: 8)
             if let detail { Text(detail).foregroundStyle(.secondary) }
-            if chevron {
-                Image(systemName: "chevron.right").font(.footnote.weight(.semibold)).foregroundStyle(.tertiary)
-                    .accessibilityHidden(true)
+            if chevron || menu {
+                Image(systemName: menu ? "chevron.up.chevron.down" : "chevron.right").font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary).accessibilityHidden(true)
             }
         }
         .padding(.vertical, 10)
@@ -197,6 +199,8 @@ struct BigButton: View {
 struct RoundButton: View {
     let title: String
     let systemImage: String
+    /// Tinted glass and a white symbol, for a main action such as power.
+    var tint: Color? = nil
     let action: () -> Void
     @ScaledMetric private var size = 48.0
 
@@ -205,9 +209,10 @@ struct RoundButton: View {
             Label(title, systemImage: systemImage)
                 .labelStyle(.iconOnly)
                 .font(.title3.weight(.semibold))
+                .foregroundStyle(tint == nil ? Color.primary : .white)
                 .frame(width: size, height: size)
         }
-        .buttonStyle(.glass(.clear))
+        .buttonStyle(.glass(tint.map { .clear.tint($0.opacity(0.7)) } ?? .clear))
         .buttonBorderShape(.circle)
     }
 }

@@ -17,6 +17,15 @@ struct DreameScreen: View {
         }
         .navigationTitle("Dreame L40 Ultra")
         .task(id: robot.isSetUp) { if robot.isSetUp { await robot.watch() } }
+        .toolbar {
+            if robot.isSetUp {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu("More", systemImage: "ellipsis.circle") {
+                        Button("Sign out of Dreamehome", systemImage: "rectangle.portrait.and.arrow.right", role: .destructive) { confirmSignOut = true }
+                    }
+                }
+            }
+        }
         .alert("Sign out of Dreamehome?", isPresented: $confirmSignOut) {
             Button("Cancel", role: .cancel) {}
             Button("Sign out", role: .destructive, action: robot.signOut)
@@ -62,62 +71,61 @@ struct DreameScreen: View {
     // MARK: Controls
 
     @ViewBuilder private var controls: some View {
-        GlassCard {
-            CardRow(title: robot.status.cardLine, systemImage: robot.values.isEmpty ? "icloud.slash" : "icloud")
-            if case .offline(let reason?) = robot.status { CardCaption(reason).padding(.bottom, 8) }
+        let ready = robot.int(MIoT(3, 1)) != nil
+        DeviceHeader(symbol: "circle.circle",
+                     title: ready ? "\(DreameDevice.stateName(robot.int(MIoT(2, 1)))) · \(robot.int(MIoT(3, 1)) ?? 0) %" : robot.status.cardLine,
+                     subtitle: subtitle) {
+            if ready {
+                Group {
+                    if cleaning {
+                        RoundButton(title: "Pause", systemImage: "pause.fill", tint: .orange) { robot.act(MIoT(2, 2), "pause") }
+                    } else {
+                        RoundButton(title: "Start cleaning", systemImage: "play.fill", tint: .green) { robot.act(MIoT(2, 1), "start") }
+                    }
+                }
+                .feature("start-pause-dock")
+            }
         }
+        .feature("status")
 
-        if robot.int(MIoT(3, 1)) != nil {
-            GlassCard(title: "Now") {
-                CardRow(title: "State", detail: DreameDevice.stateName(robot.int(MIoT(2, 1))))
-                CardRow(title: "Battery", detail: robot.int(MIoT(3, 1)).map { "\($0) %" } ?? "–", systemImage: "battery.75")
-                if let error = robot.int(MIoT(2, 2)), error != 0 {
-                    CardRow(title: "Error", detail: "code \(error)", systemImage: "exclamationmark.triangle").foregroundStyle(.red)
+        if ready {
+            TileRow {
+                Group {
+                    ActionTile(title: "Dock", systemImage: "house") { robot.act(MIoT(3, 1), "return to dock") }
+                    ActionTile(title: "Stop", systemImage: "stop") { robot.act(MIoT(4, 2), "stop") }
                 }
-                CardRow(title: "Last clean", detail: "\(robot.int(MIoT(4, 2)) ?? 0) min · \(robot.int(MIoT(4, 3)) ?? 0) m²")
-                if let count = robot.int(MIoT(12, 3)), let area = robot.int(MIoT(12, 4)) {
-                    CardRow(title: "All cleans", detail: "\(count) · \(area) m²")
+                .feature("start-pause-dock")
+                Group {
+                    ActionTile(title: "Empty bin", systemImage: "trash") { robot.act(MIoT(15, 1), "empty dust bin") }
+                    ActionTile(title: "Wash mops", systemImage: "drop") { robot.act(MIoT(4, 4), "wash mop pads", in: [(10, "2,1")]) }
+                    ActionTile(title: "Dry mops", systemImage: "wind") { robot.act(MIoT(4, 4), "dry mop pads", in: [(10, "3,1")]) }
                 }
+                .feature("base-station")
             }
-            .feature("status")
-
-            Group {
-                if cleaning {
-                    BigButton(title: "Pause", systemImage: "pause.fill", tint: .orange) { robot.act(MIoT(2, 2), "pause") }
-                } else {
-                    BigButton(title: "Start cleaning", systemImage: "play.fill", tint: .green) { robot.act(MIoT(2, 1), "start") }
-                }
-                GlassCard {
-                    CardButton(title: "Return to dock", systemImage: "house") { robot.act(MIoT(3, 1), "return to dock") }
-                    CardButton(title: "Stop", systemImage: "stop") { robot.act(MIoT(4, 2), "stop") }
-                }
-            }
-            .feature("start-pause-dock")
 
             GlassCard(title: "Rooms") {
-                if robot.rooms.isEmpty {
-                    CardButton(title: robot.loadingMap ? "Reading the map…" : "Load rooms from the robot's map", systemImage: "map") { Task { await robot.loadMap() } }
-                    .disabled(robot.loadingMap)
-                } else {
-                    ForEach(robot.rooms) { room in
-                        Button {
-                            if selectedRooms.contains(room.id) { selectedRooms.remove(room.id) } else { selectedRooms.insert(room.id) }
-                        } label: {
-                            HStack(spacing: 12) {
-                                Circle().fill(DreameMapImage.color(room.id)).frame(width: 14, height: 14)
-                                Text(room.name)
-                                Spacer()
-                                Image(systemName: selectedRooms.contains(room.id) ? "checkmark.circle.fill" : "circle").foregroundStyle(.tint)
+                if let map = robot.map {
+                    DreameMapView(map: map, selected: $selectedRooms)
+                        .padding(.top, 10)
+                        .feature("map")
+                }
+                if robot.rooms.isEmpty || robot.map == nil {
+                    CardButton(title: robot.loadingMap ? "Reading the map…" : robot.map == nil ? "Show the map" : "Load rooms",
+                               systemImage: "map") { Task { await robot.loadMap() } }
+                        .disabled(robot.loadingMap)
+                }
+                if !robot.rooms.isEmpty {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 96), spacing: 8)], spacing: 8) {
+                        ForEach(robot.rooms) { room in
+                            RoomChip(room: room, selected: selectedRooms.contains(room.id)) {
+                                if selectedRooms.contains(room.id) { selectedRooms.remove(room.id) } else { selectedRooms.insert(room.id) }
                             }
-                            .padding(.vertical, 10)
-                            .contentShape(.rect)
                         }
-                        .buttonStyle(.plain)
                     }
-                    CardCaption("Tap rooms here or on the map.").padding(.bottom, 8)
+                    .padding(.vertical, 10)
+                    .feature("rooms")
                 }
             }
-            .feature("rooms")
             if !selectedRooms.isEmpty {
                 BigButton(title: "Clean \(selectedRooms.count == 1 ? "1 room" : "\(selectedRooms.count) rooms")", systemImage: "sparkles", tint: .green) {
                     robot.clean(rooms: robot.rooms.map(\.id).filter(selectedRooms.contains))
@@ -126,81 +134,68 @@ struct DreameScreen: View {
                 .feature("rooms")
             }
 
-            GlassCard(title: "Map") {
-                if let map = robot.map {
-                    DreameMapView(map: map, selected: $selectedRooms)
-                        .padding(.vertical, 10)
-                    CardButton(title: robot.loadingMap ? "Reading the map…" : "Refresh the map", systemImage: "arrow.clockwise") { Task { await robot.loadMap() } }
-                    .disabled(robot.loadingMap)
-                } else {
-                    CardButton(title: robot.loadingMap ? "Reading the map…" : "Show the map", systemImage: "map") { Task { await robot.loadMap() } }
-                    .disabled(robot.loadingMap)
-                }
-            }
-            .feature("map")
-
-            GlassCard(title: "Mode") {
-                GlassSegments(options: [2, 0, 3, 1], title: modeTitle, selection: robot.cleaningMode, onSelect: robot.setCleaningMode)
-                    .padding(.vertical, 10)
-            }
-            .feature("clean-mode")
-
-            GlassCard(title: "Suction") {
-                GlassSegments(options: [0, 1, 2, 3], title: { ["Quiet", "Standard", "Strong", "Turbo"][$0] },
-                              selection: robot.int(MIoT(4, 4))) { robot.set(MIoT(4, 4), $0, "suction") }
-                    .padding(.vertical, 10)
-            }
-            .feature("suction")
-
-            if let wetness = robot.int(MIoT(28, 1)) {
-                GlassCard(title: "Mop wetness") {
+            GlassCard {
+                MenuRow(title: "Mode", systemImage: "square.split.2x1", options: [2, 0, 3, 1], label: modeTitle,
+                        selection: robot.cleaningMode, onSelect: robot.setCleaningMode)
+                    .feature("clean-mode")
+                MenuRow(title: "Suction", systemImage: "wind", options: [0, 1, 2, 3], label: { ["Quiet", "Standard", "Strong", "Turbo"][$0] },
+                        selection: robot.int(MIoT(4, 4))) { robot.set(MIoT(4, 4), $0, "suction") }
+                    .feature("suction")
+                if let wetness = robot.int(MIoT(28, 1)) {
                     HStack {
+                        Label("Wetness", systemImage: "drop.halffull")
                         Slider(value: Binding { draggedWetness ?? Double(wetness) } set: { draggedWetness = $0 }, in: 1...32, step: 1) { editing in
                             guard !editing, let value = draggedWetness else { return }
                             robot.set(MIoT(28, 1), Int(value), "wetness")
                             draggedWetness = nil
                         }
-                        Text("\(Int(draggedWetness ?? Double(wetness)))").monospacedDigit().frame(width: 32, alignment: .trailing)
+                        Text("\(Int(draggedWetness ?? Double(wetness)))").monospacedDigit().frame(width: 28, alignment: .trailing)
                     }
-                    .padding(.vertical, 10)
-                    CardCaption("1 is nearly dry, 32 is wettest.").padding(.bottom, 8)
+                    .padding(.vertical, 8)
+                    .feature("water-level")
                 }
-                .feature("water-level")
-            }
-
-            GlassCard(title: "Base station") {
-                CardRow(title: "Now", detail: dockState)
-                CardButton(title: "Wash the mop pads", systemImage: "drop") { robot.act(MIoT(4, 4), "wash mop pads", in: [(10, "2,1")]) }
-                CardButton(title: "Dry the mop pads", systemImage: "wind") { robot.act(MIoT(4, 4), "dry mop pads", in: [(10, "3,1")]) }
-                CardButton(title: "Empty the dust bin", systemImage: "trash") { robot.act(MIoT(15, 1), "empty dust bin") }
-            }
-            .feature("base-station")
-
-            if robot.int(MIoT(5, 1)) != nil {
-                GlassCard(title: "Do not disturb") {
-                    Toggle("Do not disturb", isOn: Binding { robot.int(MIoT(5, 1)) == 1 } set: { robot.setFlag(MIoT(5, 1), $0, "do not disturb") })
-                        .padding(.vertical, 6)
-                    DatePicker("From", selection: time(MIoT(5, 2)), displayedComponents: .hourAndMinute).padding(.vertical, 4)
-                    DatePicker("Until", selection: time(MIoT(5, 3)), displayedComponents: .hourAndMinute).padding(.vertical, 4)
+                if robot.int(MIoT(5, 1)) != nil {
+                    Toggle(isOn: Binding { robot.int(MIoT(5, 1)) == 1 } set: { robot.setFlag(MIoT(5, 1), $0, "do not disturb") }) {
+                        Label("Do not disturb", systemImage: "moon")
+                    }
+                    .padding(.vertical, 6)
+                    .feature("do-not-disturb")
+                    HStack {
+                        DatePicker("From", selection: time(MIoT(5, 2)), displayedComponents: .hourAndMinute)
+                        DatePicker("until", selection: time(MIoT(5, 3)), displayedComponents: .hourAndMinute)
+                    }
+                    .padding(.vertical, 4)
+                    .feature("do-not-disturb")
                 }
-                .feature("do-not-disturb")
             }
 
-            GlassCard(title: "Parts") {
-                ForEach(parts, id: \.name) { part in
-                    if let percent = robot.int(part.percent) {
-                        CardRow(title: part.name, detail: "\(percent) %\(robot.int(part.hours).map { " · \($0) h left" } ?? "")")
+            GlassCard(title: "Parts and totals") {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), alignment: .leading), count: 3), alignment: .leading, spacing: 12) {
+                    ForEach(parts, id: \.name) { part in
+                        if let percent = robot.int(part.percent) {
+                            CardStat(label: part.name, value: "\(percent) %")
+                        }
+                    }
+                    .feature("consumables")
+                    if let count = robot.int(MIoT(12, 3)), let area = robot.int(MIoT(12, 4)) {
+                        CardStat(label: "All cleans", value: "\(count) · \(area) m²")
                     }
                 }
+                .padding(.vertical, 10)
             }
-            .feature("consumables")
         }
 
         if let problem = robot.problem { CardCaption(problem).foregroundStyle(.red) }
         CardCaption("Goes through Dreame's cloud, so it works away from home too.")
+    }
 
-        Button("Sign out of Dreamehome", role: .destructive) { confirmSignOut = true }
-            .padding(.top, 8)
+    /// An error, the offline reason, the dock's job, or the last clean.
+    private var subtitle: String? {
+        if case .offline(let reason?) = robot.status { return reason }
+        if let error = robot.int(MIoT(2, 2)), error != 0 { return "Error code \(error)" }
+        if dockState != "Idle" { return dockState }
+        guard let minutes = robot.int(MIoT(4, 2)), let area = robot.int(MIoT(4, 3)) else { return nil }
+        return "Last clean \(minutes) min · \(area) m²"
     }
 
     @State private var draggedWetness: Double?
@@ -332,5 +327,26 @@ struct DreameMapView: View {
         return sums.map { room, s in
             (room, DreameMapImage.display(Double(s.x) / Double(s.n) + 0.5, Double(s.y) / Double(s.n) + 0.5, width: map.width))
         }.sorted { $0.room < $1.room }
+    }
+}
+
+/// A room to tick for cleaning: its map colour and name, tinted when selected.
+private struct RoomChip: View {
+    let room: DreameMap.Room
+    let selected: Bool
+    let toggle: () -> Void
+
+    var body: some View {
+        Button(action: toggle) {
+            HStack(spacing: 6) {
+                Circle().fill(DreameMapImage.color(room.id)).frame(width: 12, height: 12).accessibilityHidden(true)
+                Text(room.name).font(.subheadline.weight(.medium)).lineLimit(1)
+            }
+            .foregroundStyle(selected ? .white : .primary)
+            .frame(maxWidth: .infinity, minHeight: 44)
+        }
+        .buttonStyle(.glass(selected ? .clear.tint(selectedTint) : .clear))
+        .buttonBorderShape(.capsule)
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

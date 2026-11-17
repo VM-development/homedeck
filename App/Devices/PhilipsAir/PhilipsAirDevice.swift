@@ -242,3 +242,8 @@ final class PhilipsAirDevice: HomeDevice {
             + "filters \(s.preFilter ?? -1)/\(s.hepa ?? -1)/\(s.carbon ?? -1)/\(s.wick ?? -1)"
     }
 }
+
+extension PhilipsAirDevice: PowerSwitchable {
+    var isOn: Bool? { state?.power }
+    func setPower(_ on: Bool) { send(["pwr": on ? "1" : "0"]) { $0.power = on } }
+}

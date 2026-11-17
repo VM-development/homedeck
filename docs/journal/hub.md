@@ -202,3 +202,19 @@ Article note: across seven devices the most repeated lesson wasn't about protoco
 - `BigButton`, `RoundButton` and `GlassChip` use the system's `.glass(.clear…)` button style. Round buttons have VoiceOver titles and scale with text size; segments and chips announce "selected" and are 44 pt tall; the segment lens doesn't slide with Reduce Motion; card rows read as one element.
 **Next:** The owner's review and merge.
 Article note: the audit's biggest cut was a protocol method every device implemented and nothing ever called.
+
+## 2026-11-18: Tiles and compact device screens
+
+**Tried:** The owner asked for the device list as tiles and for more compact, better-looking device screens. After the owner approved a mockup, Home and Market became tile grids, and the six screens followed one pattern:
+- a header with status and the main action;
+- readings in stat grids;
+- settings as menu rows in one card;
+- on/off settings and one-shot actions as small tiles;
+- Forget/Change in a "More" menu.
+**Device answered:** The owner checked it on the phone: looks good, controls work.
+**Conclusion:**
+- New shared pieces in `App/UI/DeviceUI.swift`: `DeviceTile`, `TilePowerButton`, `DeviceHeader`, `MenuRow`, `ToggleTile`, `ActionTile`, `TileRow`, and the `PowerSwitchable` protocol. The fan and the purifier conform, which gives their Home tiles a power button.
+- `CardRow` gained a menu style, and `RoundButton` an optional tint.
+- The add-device skill and checklist describe the new screen pattern.
+**Next:** The owner's review, then merge into `main` and push.
+Article note: one approved mockup set the pattern for six screens, so the redesign took one review instead of six.

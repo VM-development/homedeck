@@ -14,6 +14,15 @@ struct PhilipsAirScreen: View {
             if purifier.isSetUp { controls } else { setup }
         }
         .navigationTitle("Philips 2000i")
+        .toolbar {
+            if purifier.isSetUp {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu("More", systemImage: "ellipsis.circle") {
+                        Button("Change purifier", systemImage: "arrow.triangle.2.circlepath", role: .destructive) { confirmForget = true }
+                    }
+                }
+            }
+        }
         .alert("Remove the purifier's IP?", isPresented: $confirmForget) {
             Button("Cancel", role: .cancel) {}
             Button("Remove", role: .destructive, action: purifier.forget)
@@ -57,13 +66,19 @@ struct PhilipsAirScreen: View {
     // MARK: Controls
 
     @ViewBuilder private var controls: some View {
-        GlassCard {
-            CardRow(title: purifier.status.cardLine, systemImage: purifier.state == nil ? "wifi.slash" : "wifi")
-            if case .offline(let reason?) = purifier.status { CardCaption(reason).padding(.bottom, 8) }
+        let s = purifier.state
+        DeviceHeader(symbol: "humidifier", title: s.map { $0.power ? "On · \(PhilipsAirDevice.modeName($0))" : "Off" } ?? purifier.status.cardLine,
+                     subtitle: subtitle) {
+            if let s {
+                RoundButton(title: s.power ? "Turn off" : "Turn on", systemImage: "power", tint: s.power ? .green : nil) {
+                    purifier.setPower(!s.power)
+                }
+                .feature("power")
+            }
         }
 
-        if let s = purifier.state {
-            GlassCard(title: "Air") {
+        if let s {
+            GlassCard {
                 Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 12) {
                     GridRow {
                         CardStat(label: "PM2.5", value: s.pm25.map { "\($0) µg/m³" }).feature("air-quality")
@@ -77,82 +92,43 @@ struct PhilipsAirScreen: View {
                 .padding(.vertical, 10)
             }
 
-            Group {
-                if s.power {
-                    BigButton(title: "Turn off", systemImage: "power", tint: .red) { purifier.send(["pwr": "0"]) { $0.power = false } }
-                } else {
-                    BigButton(title: "Turn on", systemImage: "power", tint: .green) { purifier.send(["pwr": "1"]) { $0.power = true } }
-                }
-            }
-            .feature("power")
-
-            GlassCard(title: "Mode") {
-                GlassSegments(options: Purifier.modes, title: modeTitle, selection: s.mode) { mode in
+            GlassCard {
+                MenuRow(title: "Mode", systemImage: "aqi.medium", options: Purifier.modes, label: modeTitle, selection: s.mode) { mode in
                     // Manual needs a speed with it; keep the current one.
                     let pairs: [String: Any] = mode == "M" ? ["mode": "M", "om": manualSpeed(s)] : ["mode": mode]
                     purifier.send(pairs) { $0.mode = mode }
                 }
-                .padding(.vertical, 10)
-            }
-            .feature("mode")
-
-            GlassCard(title: "Fan speed") {
-                GlassSegments(options: Purifier.fanSpeeds, title: { $0 == "t" ? "Turbo" : $0 },
-                              selection: s.mode == "M" ? s.fanSpeed : nil) { speed in
+                .feature("mode")
+                MenuRow(title: "Fan speed", systemImage: "fan", options: Purifier.fanSpeeds, label: { $0 == "t" ? "Turbo" : "Speed \($0)" },
+                        selection: s.mode == "M" ? s.fanSpeed : nil, value: s.mode == "M" ? nil : "Automatic") { speed in
                     purifier.send(["mode": "M", "om": speed]) { $0.mode = "M"; $0.fanSpeed = speed }
                 }
-                .padding(.vertical, 10)
-                if s.mode != "M" { CardCaption("Choosing a speed switches to manual.").padding(.bottom, 8) }
-            }
-            .feature("fan-speed")
-
-            GlassCard(title: "Humidifier") {
-                GlassSegments(options: [false, true], title: { $0 ? "Purify + humidify" : "Purify only" }, selection: s.humidify) { on in
-                    let pairs: [String: Any] = on ? ["func": "PH", "rhset": s.humidityTarget] : ["func": "P"]
-                    purifier.send(pairs) { $0.humidify = on }
+                .feature("fan-speed")
+                MenuRow(title: "Humidify", systemImage: "humidity", options: [0] + Purifier.humidityTargets,
+                        label: { $0 == 0 ? "Off" : $0 == 70 ? "Max" : "To \($0) %" }, selection: s.humidify ? s.humidityTarget : 0) { target in
+                    let pairs: [String: Any] = target == 0 ? ["func": "P"] : ["func": "PH", "rhset": target]
+                    purifier.send(pairs) { $0.humidify = target != 0; if target != 0 { $0.humidityTarget = target } }
                 }
-                .padding(.vertical, 10)
                 .feature("humidifier")
-                if s.humidify {
-                    GlassSegments(options: Purifier.humidityTargets, title: { $0 == 70 ? "Max" : "\($0) %" },
-                                  selection: s.humidityTarget) { target in
-                        purifier.send(["func": "PH", "rhset": target]) { $0.humidityTarget = target }
-                    }
-                    .padding(.bottom, 10)
-                    .feature("humidity-target")
-                }
                 CardRow(title: "Water tank", detail: s.needsWater ? "Empty or out" : "OK", systemImage: "drop")
                     .foregroundStyle(s.needsWater ? .red : .primary)
                     .feature("water-level")
-            }
-
-            GlassCard(title: "Timer") {
-                GlassSegments(options: [0, 1, 2, 4, 8, 12], title: { $0 == 0 ? "Off" : "\($0)h" }, selection: s.timer) { hours in
+                MenuRow(title: "Timer", systemImage: "timer", options: [0, 1, 2, 4, 8, 12], label: { $0 == 0 ? "Off" : "\($0) h" },
+                        selection: s.timer, value: timerLeft(s)) { hours in
                     purifier.send(["dt": hours]) { $0.timer = hours }
                 }
-                .padding(.vertical, 10)
-                if s.timer > 0, let left = s.timerLeft, left > 0 {
-                    CardCaption("Turns off in \(Duration.seconds(left * 60).formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))).")
-                        .padding(.bottom, 8)
-                }
-            }
-            .feature("timer")
-
-            GlassCard(title: "Display light") {
-                GlassSegments(options: Purifier.brightness, title: { $0 == 0 ? "Off" : "\($0)" }, selection: s.brightness) { level in
+                .feature("timer")
+                MenuRow(title: "Display light", systemImage: "sun.max", options: Purifier.brightness,
+                        label: { $0 == 0 ? "Off" : "\($0) %" }, selection: s.brightness) { level in
                     purifier.send(["aqil": level, "uil": level == 0 ? "0" : "1"]) { $0.brightness = level }
                 }
-                .padding(.vertical, 10)
-            }
-            .feature("light")
-
-            GlassCard {
+                .feature("light")
                 Toggle(isOn: Binding { purifier.state?.childLock ?? false } set: { on in purifier.send(["cl": on]) { $0.childLock = on } }) {
                     Label("Child lock", systemImage: "lock")
                 }
                 .padding(.vertical, 6)
+                .feature("child-lock")
             }
-            .feature("child-lock")
 
             GlassCard(title: "Filters") {
                 CardRow(title: "Pre-filter", detail: s.preFilter.map { $0 == 0 ? "Clean now" : "Clean in \(days($0))" } ?? "–")
@@ -164,9 +140,18 @@ struct PhilipsAirScreen: View {
         }
         if let refused = purifier.refused { CardCaption(refused).foregroundStyle(.red) }
         CardCaption("The purifier answers only on your home Wi-Fi.")
+    }
 
-        Button("Change purifier", role: .destructive) { confirmForget = true }
-            .padding(.top, 8)
+    /// The offline reason, or what the purifier is doing while it's on.
+    private var subtitle: String? {
+        if case .offline(let reason?) = purifier.status { return reason }
+        guard let s = purifier.state, s.power else { return nil }
+        return s.humidify ? "Purifying and humidifying" : "Purifying"
+    }
+
+    private func timerLeft(_ s: Purifier.State) -> String? {
+        guard s.timer > 0, let left = s.timerLeft, left > 0 else { return nil }
+        return "\(Duration.seconds(left * 60).formatted(.units(allowed: [.hours, .minutes], width: .abbreviated))) left"
     }
 
     private func modeTitle(_ mode: String) -> String {

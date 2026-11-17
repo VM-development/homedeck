@@ -1,43 +1,32 @@
 import SwiftUI
 import HubCore
 
-/// Market tab: every device HomeDeck knows, with how much of it works.
+/// Market tab: every device HomeDeck knows, as tiles with how much of it works.
 struct MarketView: View {
     let store: DeviceStore
     let openDevice: (DeviceKind) -> Void
 
     var body: some View {
         GlassScreen {
-            ForEach(store.kinds) { kind in
-                NavigationLink {
-                    FeatureListView(kind: kind, store: store, openDevice: openDevice)
-                } label: {
-                    MarketTile(kind: kind, isAdded: store.isAdded(kind))
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 12)], spacing: 12) {
+                ForEach(store.kinds) { kind in
+                    NavigationLink {
+                        FeatureListView(kind: kind, store: store, openDevice: openDevice)
+                    } label: {
+                        DeviceTile(symbol: kind.symbol, name: kind.name,
+                                   line: "\(kind.link == .bluetooth ? "Bluetooth" : "Wi-Fi") · \(kind.workingSummary)",
+                                   reservesCorner: store.isAdded(kind))
+                    }
+                    .buttonStyle(.plain)
+                    .overlay(alignment: .topTrailing) {
+                        if store.isAdded(kind) {
+                            Image(systemName: "checkmark.circle.fill").foregroundStyle(.green).padding(20).accessibilityLabel("On Home")
+                        }
+                    }
                 }
-                .buttonStyle(.plain)
             }
         }
         .navigationTitle("Market")
-    }
-}
-
-struct MarketTile: View {
-    let kind: DeviceKind
-    let isAdded: Bool
-
-    var body: some View {
-        GlassCard {
-            HStack(spacing: 14) {
-                Image(systemName: kind.symbol).font(.title2).frame(width: 36)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(kind.name).font(.headline)
-                    Text("\(kind.link == .bluetooth ? "Bluetooth" : "Wi-Fi") · \(kind.workingSummary)")
-                        .font(.subheadline).foregroundStyle(.secondary)
-                }
-                Spacer()
-                if isAdded { Image(systemName: "checkmark.circle.fill").foregroundStyle(.green) }
-            }
-        }
     }
 }
 

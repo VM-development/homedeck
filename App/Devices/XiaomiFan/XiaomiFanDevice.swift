@@ -173,3 +173,8 @@ final class XiaomiFanDevice: HomeDevice {
             + "timer \(s.timer), light \(s.light), sound \(s.sound), lock \(s.lock), fault \(s.fault)"
     }
 }
+
+extension XiaomiFanDevice: PowerSwitchable {
+    var isOn: Bool? { state?.power }
+    func setPower(_ on: Bool) { set(.power, on) { $0.power = on } }
+}

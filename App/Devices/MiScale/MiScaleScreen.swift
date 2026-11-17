@@ -20,6 +20,21 @@ struct MiScaleScreen: View {
         .navigationTitle("Scale S400")
         .task { scale.listen() }
         .sheet(item: $editing) { PersonEditor(person: $0, scale: scale) }
+        .toolbar {
+            if scale.isSetUp {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu("More", systemImage: "ellipsis.circle") {
+                        Button("Change bind key or MAC", systemImage: "key", role: .destructive) { confirmForget = true }
+                    }
+                }
+            }
+        }
+        .alert("Remove the bind key and MAC?", isPresented: $confirmForget) {
+            Button("Cancel", role: .cancel) {}
+            Button("Remove", role: .destructive, action: scale.forget)
+        } message: {
+            Text("Saved weigh-ins stay.")
+        }
     }
 
     // MARK: Setup
@@ -60,56 +75,39 @@ struct MiScaleScreen: View {
         let profile = shownProfile ?? last?.profileID ?? 1
         let history = scale.weighIns.filter { $0.profileID == profile }
         let shownIDs = scale.profileIDs + (scale.weighIns.contains { $0.profileID == 0 } ? [0] : [])
+        let composition = last.flatMap { $0.profileID == 0 ? nil : scale.composition(for: $0) }
 
-        GlassCard(title: "Latest") {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(last.map { "\(kg($0.weight)) kg" } ?? "–")
-                    .font(.largeTitle.weight(.semibold).monospacedDigit())
-                if let last {
-                    Text("\(last.date.formatted(date: .abbreviated, time: .shortened)) · \(name(last.profileID))\(last.savedToHealth == true ? " · in Apple Health" : "")")
-                        .foregroundStyle(.secondary)
-                } else {
-                    Text("Step on the scale barefoot.").foregroundStyle(.secondary)
+        DeviceHeader(symbol: "scalemass", title: last.map { "\(kg($0.weight)) kg" } ?? "No weigh-in yet",
+                     subtitle: last.map { "\($0.date.formatted(date: .abbreviated, time: .shortened)) · \(name($0.profileID))\($0.savedToHealth == true ? " · in Apple Health" : "")" }
+                        ?? "Step on the scale barefoot.")
+            .feature("weight")
+
+        if let last {
+            GlassCard {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), alignment: .leading), count: 3), alignment: .leading, spacing: 12) {
+                    CardStat(label: "Heart rate", value: last.heartRate.map { "\($0) bpm" }).feature("heart-rate")
+                    if let c = composition {
+                        Group {
+                            CardStat(label: "BMI", value: c.bmi.formatted(.number.precision(.fractionLength(1))))
+                            CardStat(label: "Body fat", value: c.fatPercent.map { "\(percent($0)) %" })
+                            CardStat(label: "Muscle", value: c.muscleMass.map { "\(kg($0)) kg" })
+                            CardStat(label: "Water", value: c.waterPercent.map { "\(percent($0)) %" })
+                            CardStat(label: "Bone", value: c.boneMass.map { "\(kg($0)) kg" })
+                        }
+                        .feature("body-composition")
+                    }
+                }
+                .padding(.vertical, 10)
+                if composition == nil, last.profileID != 0 {
+                    CardButton(title: "Add height, birth year and sex for body composition") { editing = scale.person(last.profileID) }
+                        .feature("body-composition")
                 }
             }
-            .padding(.vertical, 10)
-        }
-        .feature("weight")
-
-        GlassCard {
-            CardRow(title: "Heart rate", detail: last?.heartRate.map { "\($0) bpm" } ?? "–", systemImage: "heart")
-        }
-        .feature("heart-rate")
-
-        if let last, last.profileID != 0 {
-            GlassCard(title: "Body composition") {
-                if let c = scale.composition(for: last) {
-                    CardRow(title: "BMI", detail: c.bmi.formatted(.number.precision(.fractionLength(1))))
-                    CardRow(title: "Body fat", detail: c.fatPercent.map { "\($0.formatted(.number.precision(.fractionLength(1)))) %" } ?? "–")
-                    CardRow(title: "Muscle", detail: c.muscleMass.map { "\(kg($0)) kg" } ?? "–")
-                    CardRow(title: "Water", detail: c.waterPercent.map { "\($0.formatted(.number.precision(.fractionLength(1)))) %" } ?? "–")
-                    CardRow(title: "Bone", detail: c.boneMass.map { "\(kg($0)) kg" } ?? "–")
-                    CardRow(title: "Lean mass", detail: c.leanMass.map { "\(kg($0)) kg" } ?? "–")
-                } else {
-                    CardButton(title: "Add height, birth year and sex for \(scale.person(last.profileID).title)") { editing = scale.person(last.profileID) }
-                }
+            if composition != nil {
+                CardCaption("Body composition is estimated from impedance; Xiaomi Home uses its own formula. Socks block the impedance.")
+                    .feature("body-composition")
             }
-            .feature("body-composition")
-            CardCaption("Estimated from impedance with published equations; Xiaomi Home uses its own formula, so its numbers can differ. Socks block the impedance.")
-                .feature("body-composition")
         }
-
-        GlassCard(title: "People on this scale") {
-            ForEach(scale.profileIDs, id: \.self) { id in
-                let person = scale.person(id)
-                CardButton(title: person.title, detail: person.savesToHealth ? "Apple Health" : person.details ?? "Add details", systemImage: "person") { editing = person }
-            }
-            Button { editing = Person(id: scale.nextPersonID) } label: {
-                CardRow(title: "Add person", systemImage: "plus")
-            }
-            .buttonStyle(.plain)
-        }
-        .feature("profiles")
 
         if shownIDs.count > 1 {
             ScrollView(.horizontal, showsIndicators: false) {
@@ -129,7 +127,7 @@ struct MiScaleScreen: View {
                     PointMark(x: .value("Date", $0.date), y: .value("kg", $0.weight))
                 }
                 .chartYScale(domain: .automatic(includesZero: false))
-                .frame(height: 180)
+                .frame(height: 160)
                 .padding(.vertical, 10)
             }
             .feature("history")
@@ -137,7 +135,7 @@ struct MiScaleScreen: View {
 
         GlassCard(title: "Weigh-ins") {
             if history.isEmpty { CardRow(title: "None yet") }
-            ForEach(history.reversed().prefix(30)) { w in
+            ForEach(history.reversed().prefix(10)) { w in
                 Menu {
                     Section("Move to") {
                         ForEach(scale.profileIDs + [0], id: \.self) { id in
@@ -147,26 +145,27 @@ struct MiScaleScreen: View {
                 } label: {
                     CardRow(title: w.date.formatted(date: .abbreviated, time: .shortened), detail: "\(kg(w.weight)) kg")
                 }
-                .tint(.primary)
+                .buttonStyle(.plain)
             }
         }
         .feature("history")
+        CardCaption("Tap a weigh-in to move it to someone else.").feature("profiles")
+
+        GlassCard(title: "People") {
+            ForEach(scale.profileIDs, id: \.self) { id in
+                let person = scale.person(id)
+                CardButton(title: person.title, detail: person.savesToHealth ? "Apple Health" : person.details ?? "Add details",
+                           systemImage: "person") { editing = person }
+            }
+            CardButton(title: "Add person", systemImage: "plus") { editing = Person(id: scale.nextPersonID) }
+        }
+        .feature("profiles")
 
         if scale.decryptFailed {
             CardCaption("A weigh-in couldn't be decrypted. If the scale was reset or re-added in Xiaomi Home, its bind key changed: enter the new one.")
                 .foregroundStyle(.red)
         }
-        CardCaption("Tap a weigh-in to move it to someone else.")
-            .feature("profiles")
         CardCaption("Close Xiaomi Home before weighing: while it is connected, the scale stops broadcasting. Heart rate needs about 20 seconds barefoot.")
-
-        Button("Change bind key or MAC", role: .destructive) { confirmForget = true }
-            .padding(.top, 8)
-            .confirmationDialog("Remove the bind key and MAC?", isPresented: $confirmForget) {
-                Button("Remove", role: .destructive, action: scale.forget)
-            } message: {
-                Text("Saved weigh-ins stay.")
-            }
     }
 
     private var listening: some View {
@@ -177,6 +176,8 @@ struct MiScaleScreen: View {
     private func name(_ id: Int) -> String { id == 0 ? "Guest" : scale.person(id).title }
 
     private func kg(_ value: Double) -> String { value.formatted(.number.precision(.fractionLength(1))) }
+
+    private func percent(_ value: Double) -> String { value.formatted(.number.precision(.fractionLength(1))) }
 }
 
 private struct PersonEditor: View {
