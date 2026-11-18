@@ -1,4 +1,4 @@
-# Post 2 of 9: WalkingPad C2, where the log beat open source
+# Post 2 of 10: WalkingPad C2, where the log beat open source
 
 The first device was my walking pad, a WalkingPad C2.
 

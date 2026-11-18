@@ -1,4 +1,4 @@
-# Post 1 of 9: Seven vendor apps, one app
+# Post 1 of 10: Seven vendor apps, one app
 
 My phone had a separate app for almost every device at home: a walking pad, a scale, a standing fan, an air purifier, a speaker, a robot vacuum and a kettle. Seven apps, seven accounts, seven ways to do the same thing.
 

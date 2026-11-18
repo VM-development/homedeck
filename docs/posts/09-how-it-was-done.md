@@ -1,4 +1,4 @@
-# Post 9 of 9: How it was done, and the tool that does it now
+# Post 9 of 10: How it was done, and the tool that does it now
 
 Seven devices in, here is what made the work hold together, and what I automated at the end.
 

@@ -1,4 +1,4 @@
-# Post 8 of 9: AENO kettle, where "no account" stopped
+# Post 8 of 10: AENO kettle, where "no account" stopped
 
 Not every device ends with "it works". The kettle, an AENO EK7S, is paused, and I think that is worth a post too.
 

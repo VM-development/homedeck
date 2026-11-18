@@ -1,4 +1,4 @@
-# Post 4 of 9: Xiaomi standing fan, the wrong Wi-Fi
+# Post 4 of 10: Xiaomi standing fan, the wrong Wi-Fi
 
 The fan was supposed to be quick. The Xiaomi Smart Standing Fan 2 Pro speaks miIO: small encrypted UDP packets on the home network, with a token I already had from the scale post.
 

@@ -1,4 +1,4 @@
-# Post 7 of 9: Dreame L40, the cloud one
+# Post 7 of 10: Dreame L40, the cloud one
 
 I expected the robot vacuum, a Dreame L40 Ultra, to be the hardest device. It was the easiest one to drive, and the hardest one to draw.
 

@@ -1,0 +1,123 @@
+{
+  "olc": "0.1",
+  "note": "Written by HomeDeck from the purifier's behaviour and the Air+ Android app (docs/devices/philips-ac2729/protocol.md), not by the maker. It describes the purifier as it is today. The shared secret is published in open-source code and isn't repeated here.",
+  "device": {
+    "maker": "Philips",
+    "model": "AC2729/13 air purifier and humidifier",
+    "firmware": ["0.3.4"],
+    "category": "climate"
+  },
+  "links": [
+    {
+      "id": "lan",
+      "type": "coap",
+      "port": 5683,
+      "discovery": [{ "multicast": "224.0.1.187" }, { "probe": "GET /sys/dev/info" }],
+      "note": "CoAP over UDP, non-confirmable requests. The phone must be on the purifier's own Wi-Fi network."
+    }
+  ],
+  "security": {
+    "level": "shared-secret",
+    "key": { "unique": "per-model", "from": "app" },
+    "pairing": "shared-secret",
+    "setupCode": "none",
+    "encryption": "aes-cbc",
+    "integrity": "unkeyed-hash",
+    "freshness": "unauthenticated-counter",
+    "controllers": "anyone",
+    "worksOffline": true,
+    "buttonPressFor": [],
+    "otherInterfaces": [],
+    "disclosure": { "contact": null, "supportUntil": null },
+    "envelope": "Before a command, send sync; its reply is the device's counter. The command uses counter + 1 (after 2,000,000,000 it wraps to 1), written as 8 uppercase hex characters, c. MD5(secret + c) as 32 uppercase hex characters: the first 16 characters, as ASCII bytes, are the AES-128 key, the last 16 the IV. The body is c + uppercase hex of AES-128-CBC with PKCS#7 padding of the JSON + uppercase hex of SHA-256(c + ciphertext hex). Pushes from the device carry their own counter in their first 8 characters.",
+    "note": "Every unit uses the same secret, so anyone on the Wi-Fi who knows it can control any of these purifiers; empty DeviceId and EnduserId are accepted. The SHA-256 has no key, so it doesn't stop a changed message. The disclosure contact and support date weren't looked up for this example."
+  },
+  "messages": {
+    "info": {
+      "link": "lan", "to": "device", "method": "GET", "path": "/sys/dev/info",
+      "reply": "infoReply"
+    },
+    "infoReply": {
+      "link": "lan", "to": "app",
+      "text": "Plain JSON about the unit. option \"1\" means this encrypted CoAP variant."
+    },
+    "sync": {
+      "link": "lan", "to": "device", "method": "POST", "path": "/sys/dev/sync",
+      "text": "8 random uppercase hex characters.",
+      "reply": "syncReply"
+    },
+    "syncReply": {
+      "link": "lan", "to": "app",
+      "text": "The device's counter, 8 hex characters."
+    },
+    "observeStatus": {
+      "link": "lan", "to": "device", "method": "GET", "path": "/sys/dev/status", "observe": true,
+      "reply": "status",
+      "note": "The first push takes 2-10 s. Cancel with Observe 1: after several subscriptions from different ports without cancelling, the purifier sent nothing until it was unplugged."
+    },
+    "status": {
+      "link": "lan", "to": "app", "encrypted": true,
+      "json": { "state": { "reported": {} } },
+      "fields": {
+        "power": "/state/reported/pwr", "mode": "/state/reported/mode", "fanSpeed": "/state/reported/om",
+        "function": "/state/reported/func", "humidityTarget": "/state/reported/rhset", "timerLeft": "/state/reported/dtrs",
+        "displayLight": "/state/reported/aqil", "childLock": "/state/reported/cl", "pm25": "/state/reported/pm25",
+        "allergenIndex": "/state/reported/iaql", "humidity": "/state/reported/rh", "temperature": "/state/reported/temp",
+        "hepaHoursLeft": "/state/reported/fltsts1"
+      },
+      "examples": [{
+        "json": { "state": { "reported": { "pwr": "1", "mode": "M", "om": "2", "func": "PH", "rhset": 50, "pm25": 3, "rh": 45 } } },
+        "fields": { "power": "1", "mode": "M", "fanSpeed": "2", "function": "PH", "humidityTarget": 50, "pm25": 3, "humidity": 45 },
+        "note": "Values made up; the keys are as seen on the device, which sends about 40 of them."
+      }],
+      "note": "The whole state comes on every change and every few seconds while readings move."
+    },
+    "control": {
+      "link": "lan", "to": "device", "method": "POST", "path": "/sys/dev/control", "encrypted": true,
+      "json": { "state": { "desired": { "CommandType": "app", "DeviceId": "", "EnduserId": "" } } },
+      "fields": {
+        "power": "/state/desired/pwr", "mode": "/state/desired/mode", "fanSpeed": "/state/desired/om",
+        "function": "/state/desired/func", "humidityTarget": "/state/desired/rhset", "timer": "/state/desired/dt",
+        "displayLight": "/state/desired/aqil", "childLock": "/state/desired/cl"
+      },
+      "reply": "controlReply",
+      "examples": [{
+        "json": { "state": { "desired": { "CommandType": "app", "DeviceId": "", "EnduserId": "", "pwr": "1" } } },
+        "fields": { "power": "1" }
+      }],
+      "note": "Sync first. Send only the keys that change; the change shows in the next status push."
+    },
+    "controlReply": {
+      "link": "lan", "to": "app",
+      "text": "{\"status\":\"success\"}, not encrypted."
+    }
+  },
+  "properties": [
+    { "id": "power", "title": "Power", "type": "enum", "read": "status", "write": "control", "values": [
+      { "wire": "1", "means": "on" }, { "wire": "0", "means": "off" }
+    ] },
+    { "id": "mode", "title": "Mode", "type": "enum", "read": "status", "write": "control", "values": [
+      { "wire": "P", "means": "auto" }, { "wire": "A", "means": "allergen" }, { "wire": "S", "means": "sleep" }, { "wire": "M", "means": "manual" }
+    ], "note": "Manual needs fanSpeed in the same command." },
+    { "id": "fanSpeed", "title": "Fan speed", "type": "enum", "read": "status", "write": "control", "values": [
+      { "wire": "1", "means": "1" }, { "wire": "2", "means": "2" }, { "wire": "3", "means": "3" }, { "wire": "t", "means": "turbo" },
+      { "wire": "s", "means": "sleep (read only)" }, { "wire": "0", "means": "off (read only)" }
+    ], "note": "Write it only with mode M. Reads s in sleep mode, and in auto mode on the unit tested." },
+    { "id": "function", "title": "Function", "type": "enum", "read": "status", "write": "control", "values": [
+      { "wire": "P", "means": "purify" }, { "wire": "PH", "means": "purify and humidify" }
+    ] },
+    { "id": "humidityTarget", "title": "Target humidity", "type": "integer", "unit": "%", "min": 40, "max": 70, "step": 10,
+      "read": "status", "write": "control", "note": "70 is shown as Max." },
+    { "id": "timer", "title": "Off timer", "type": "integer", "unit": "h", "min": 0, "max": 12, "write": "control" },
+    { "id": "timerLeft", "title": "Off timer left", "type": "integer", "unit": "min", "read": "status" },
+    { "id": "displayLight", "title": "Display light", "type": "integer", "unit": "%", "min": 0, "max": 100, "step": 25,
+      "read": "status", "write": "control", "note": "Send uil \"1\" with it, or \"0\" with 0." },
+    { "id": "childLock", "title": "Child lock", "type": "boolean", "read": "status", "write": "control",
+      "note": "Remote commands still work while it is on." },
+    { "id": "pm25", "title": "PM2.5", "type": "integer", "unit": "µg/m³", "read": "status" },
+    { "id": "allergenIndex", "title": "Allergen index", "type": "integer", "read": "status" },
+    { "id": "humidity", "title": "Humidity", "type": "integer", "unit": "%", "read": "status" },
+    { "id": "temperature", "title": "Temperature", "type": "integer", "unit": "°C", "read": "status" },
+    { "id": "hepaHoursLeft", "title": "HEPA filter left", "type": "integer", "unit": "h", "read": "status" }
+  ]
+}

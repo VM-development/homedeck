@@ -1,4 +1,4 @@
-# Post 3 of 9: Mi Scale S400, the scale that says its address out loud
+# Post 3 of 10: Mi Scale S400, the scale that says its address out loud
 
 My scale, a Mi Body Composition Scale S400, never connects to anything. Each weigh-in is broadcast as Bluetooth advertisements, and the measurement frames are encrypted.
 

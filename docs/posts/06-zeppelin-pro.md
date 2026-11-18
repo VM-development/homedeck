@@ -1,4 +1,4 @@
-# Post 6 of 9: Zeppelin Pro, a polite liar
+# Post 6 of 10: Zeppelin Pro, a polite liar
 
 The Bowers & Wilkins Zeppelin Pro needed no account and no cloud. It has a local JSON API over HTTPS, a WebSocket that pushes changes, and it announces itself on the network with Bonjour.
 

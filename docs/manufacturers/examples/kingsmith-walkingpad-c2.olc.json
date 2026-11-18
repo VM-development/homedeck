@@ -1,0 +1,101 @@
+{
+  "olc": "0.1",
+  "note": "Written by HomeDeck from the pad's behaviour (docs/devices/walkingpad-c2/protocol.md), not by the maker. It describes the pad as it is today.",
+  "device": {
+    "maker": "KingSmith",
+    "model": "WalkingPad C2",
+    "firmware": [],
+    "category": "fitness"
+  },
+  "links": [
+    {
+      "id": "ble",
+      "type": "ble",
+      "advertises": "FE00",
+      "connections": 1,
+      "services": [
+        { "uuid": "FE00", "use": "The whole protocol", "characteristics": [
+          { "uuid": "FE01", "properties": ["read", "notify"] },
+          { "uuid": "FE02", "properties": ["write-without-response"] }
+        ] },
+        { "uuid": "180A", "use": "Device Information", "characteristics": [] },
+        { "uuid": "F000FFC0-0451-4000-B000-000000000000", "use": "Texas Instruments firmware update", "characteristics": [
+          { "uuid": "F000FFC1-0451-4000-B000-000000000000", "properties": ["write", "notify"] },
+          { "uuid": "F000FFC2-0451-4000-B000-000000000000", "properties": ["write", "notify"] }
+        ] }
+      ],
+      "note": "No pairing or bonding. Scan by the FE00 service, not by name. The pad talks to one phone at a time."
+    }
+  ],
+  "security": {
+    "level": "open",
+    "key": { "unique": "none", "from": "none" },
+    "pairing": "none",
+    "setupCode": "none",
+    "encryption": "none",
+    "integrity": "none",
+    "freshness": "none",
+    "controllers": "anyone",
+    "worksOffline": true,
+    "buttonPressFor": [],
+    "otherInterfaces": [
+      { "what": "Texas Instruments firmware update service (F000FFC0), open to any connected phone; whether it checks a firmware signature wasn't tested", "protection": "unknown" }
+    ],
+    "disclosure": { "contact": null, "supportUntil": null },
+    "note": "Any phone in Bluetooth range can start the belt while no other phone is connected. The checksum only catches transmission errors. The disclosure contact and support date weren't looked up for this example."
+  },
+  "messages": {
+    "askStatus": {
+      "link": "ble", "to": "device", "characteristic": "FE02",
+      "bytes": "F7 A2 00 00 {sum8:1} FD",
+      "reply": "status",
+      "examples": [{ "bytes": "F7 A2 00 00 A2 FD", "fields": {} }],
+      "note": "The pad sends nothing on its own. Ask about every 0.75 s and send commands in between, at least 0.75 s apart."
+    },
+    "status": {
+      "link": "ble", "to": "app", "characteristic": "FE01",
+      "bytes": "F8 A2 {state:u8} {speed:u8*0.1} {mode:u8} {time:u24be} {distance:u24be*10} {steps:u24be} {lastSetSpeed:u8*0.1} ?? {startedBy:u8} ?? {sum8:1} FD",
+      "examples": [{
+        "bytes": "F8 A2 01 14 01 00 00 85 00 00 06 00 00 AD 00 00 03 00 F3 FD",
+        "fields": { "state": 1, "speed": 2.0, "mode": 1, "time": 133, "distance": 60, "steps": 173, "lastSetSpeed": 0, "startedBy": 3 }
+      }],
+      "note": "lastSetSpeed is the speed last set from a phone, 0 after a stop. startedBy is 3 after a start from a phone; its meaning is a guess."
+    },
+    "setSpeed": {
+      "link": "ble", "to": "device", "characteristic": "FE02",
+      "bytes": "F7 A2 01 {speed:u8*0.1} {sum8:1} FD",
+      "examples": [
+        { "bytes": "F7 A2 01 19 BC FD", "fields": { "speed": 2.5 } },
+        { "bytes": "F7 A2 01 00 A3 FD", "fields": { "speed": 0 }, "note": "Stops the belt." }
+      ]
+    },
+    "setMode": {
+      "link": "ble", "to": "device", "characteristic": "FE02",
+      "bytes": "F7 A2 02 {mode:u8} {sum8:1} FD"
+    },
+    "start": {
+      "link": "ble", "to": "device", "characteristic": "FE02",
+      "bytes": "F7 A2 04 01 {sum8:1} FD",
+      "examples": [{ "bytes": "F7 A2 04 01 A7 FD", "fields": {} }]
+    }
+  },
+  "properties": [
+    { "id": "state", "title": "Belt state", "type": "enum", "read": "status", "values": [
+      { "wire": 0, "means": "stopped" }, { "wire": 1, "means": "running" }, { "wire": 4, "means": "standby" },
+      { "wire": 9, "means": "starting in 3" }, { "wire": 8, "means": "starting in 2" }, { "wire": 7, "means": "starting in 1" }
+    ] },
+    { "id": "speed", "title": "Belt speed", "type": "number", "unit": "km/h", "max": 6.0, "step": 0.1,
+      "read": "status", "write": "setSpeed", "note": "Accepted only while the belt runs. 0 stops it." },
+    { "id": "mode", "title": "Mode", "type": "enum", "read": "status", "write": "setMode", "values": [
+      { "wire": 0, "means": "automatic" }, { "wire": 1, "means": "manual" }, { "wire": 2, "means": "standby" }
+    ] },
+    { "id": "time", "title": "Walking time", "type": "integer", "unit": "s", "read": "status",
+      "note": "Doesn't reset between walks; standby resets it." },
+    { "id": "distance", "title": "Distance", "type": "integer", "unit": "m", "step": 10, "read": "status" },
+    { "id": "steps", "title": "Steps", "type": "integer", "read": "status" }
+  ],
+  "actions": [
+    { "id": "start", "title": "Start the belt", "send": "start", "risky": true,
+      "note": "From standby the pad ignores it: set mode to manual first. The belt moves after a 3-second countdown." }
+  ]
+}

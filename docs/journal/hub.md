@@ -253,3 +253,18 @@ The owner also asked about REA (`morluto/rea`), thinking it had reverse engineer
 - The nine posts are in `docs/posts/`, 255-341 words each.
 **Next:** The owner reviews the posts and checks that Home and Market look unchanged after the format switch, then commits.
 Article note: the owner remembered a reverse-engineering tool being used that never was; the transcripts, like the device logs, settled it.
+
+## 2026-11-18: A proposal to device makers, and the Open Local Control format
+
+**Tried:** The owner wanted to propose how makers could publish their Bluetooth and Wi-Fi protocols and protect them, since anyone in range seemed able to control the devices. The seven protocol docs were read for what stops a stranger. The owner chose a new open format over pointing makers only to Matter and the Bluetooth profiles, and a doc plus a tenth post. A subagent checked the standards and laws against their sources: ETSI EN 303 645 V3.1.3, UK PSTI, the EU Radio Equipment Directive rules and the Cyber Resilience Act, W3C's Thing Description, Matter and Bluetooth's Fitness Machine service. One correction came back: local operation without the internet is ETSI 5.9-2, and only a recommendation. W3C's Thing Description has no Bluetooth binding, and it leaves byte layouts to its protocol bindings.
+**Device answered:** No device work. The finding was only partly what the owner expected:
+- three devices are open to anyone in range: the WalkingPad, the Zeppelin and the Philips with its shared secret;
+- four are closed to strangers but also to their owner without the maker's cloud.
+**Conclusion:**
+- `docs/manufacturers/` holds the proposal (README), the Open Local Control 0.1 format (`format.md`), `schema.json`, `check.py` and two examples, the WalkingPad and the Philips as they are today.
+- `check.py` decodes every example against its byte template, follows every reference, works out the security level (open, shared-secret, per-device-key, owner-key) and lists what is missing for owner-key: eleven gaps for the WalkingPad. A broken copy (bad checksum, wrong message, overstated level) failed with three errors. The README's owner-key block for the pad passed.
+- Both examples pass `uvx check-jsonschema`.
+- The level was called vendor-cloud-key in the design. It became per-device-key, because a per-device key that misses the other requirements isn't always from a cloud.
+- Post 10 is in `docs/posts/`, and the series headings now say "of 10".
+**Next:** The owner reviews the proposal and post 10, then commits.
+Article note: the devices fail in two opposite ways, open to everyone or closed to the owner, and one design fixes both.

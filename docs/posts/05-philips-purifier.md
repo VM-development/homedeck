@@ -1,4 +1,4 @@
-# Post 5 of 9: Philips purifier, a shared secret and a long memory
+# Post 5 of 10: Philips purifier, a shared secret and a long memory
 
 The Philips 2000i AC2729 purifies and humidifies. It speaks encrypted CoAP over UDP on the home network.
 
