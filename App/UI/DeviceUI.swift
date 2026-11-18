@@ -9,28 +9,60 @@ protocol PowerSwitchable: AnyObject {
     func setPower(_ on: Bool)
 }
 
-/// A device on Home or in Market: its symbol, name and one line of status.
+/// A device on Home or in Market, compact enough that a home's devices fit on one screen:
+/// its symbol, name and one line of status side by side.
 struct DeviceTile: View {
     let symbol: String
     let name: String
     let line: String
-    /// Leaves room at the top right for the power button laid over the tile.
+    /// Leaves room at the right for the power button laid over the tile.
     var reservesCorner = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Image(systemName: symbol).font(.title2).foregroundStyle(.tint).frame(height: 44, alignment: .leading)
-                .accessibilityHidden(true)
+        HStack(spacing: 10) {
+            Image(systemName: symbol).font(.title3).foregroundStyle(.tint).frame(width: 28).accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(name).font(.subheadline.weight(.semibold)).lineLimit(2).minimumScaleFactor(0.85)
+                Text(line).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+            }
             Spacer(minLength: 0)
-            Text(name).font(.headline).lineLimit(2)
-            Text(line).font(.subheadline).foregroundStyle(.secondary).lineLimit(2)
         }
-        .padding(.trailing, reservesCorner ? 36 : 0)
-        .frame(maxWidth: .infinity, minHeight: 112, alignment: .topLeading)
-        .padding(14)
-        .contentShape(.rect(cornerRadius: 24))
-        .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 24))
+        .padding(.trailing, reservesCorner ? 38 : 0)
+        .frame(maxWidth: .infinity, minHeight: 60, alignment: .leading)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .contentShape(.rect(cornerRadius: 20))
+        .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 20))
         .accessibilityElement(children: .combine)
+    }
+}
+
+/// A category's tiles under its name, kept close together.
+struct TileGroup<Content: View>: View {
+    let title: String
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        VStack(spacing: 6) {
+            SectionTitle(title)
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 160), spacing: 8)], spacing: 8) { content }
+        }
+    }
+}
+
+/// A group's name above its tiles on Home and in Market.
+struct SectionTitle: View {
+    let text: String
+
+    init(_ text: String) { self.text = text }
+
+    var body: some View {
+        Text(text)
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(.secondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.leading, 4)
+            .accessibilityAddTraits(.isHeader)
     }
 }
 

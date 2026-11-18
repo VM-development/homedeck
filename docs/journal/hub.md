@@ -218,3 +218,13 @@ Article note: the audit's biggest cut was a protocol method every device impleme
 - The add-device skill and checklist describe the new screen pattern.
 **Next:** The owner's review, then merge into `main` and push.
 Article note: one approved mockup set the pattern for six screens, so the redesign took one review instead of six.
+
+## 2026-11-18: Devices grouped by category, compact tiles
+
+**Tried:** The owner asked for Home and Market to group devices by category: fitness (walking pad, scale), music (speaker), climate (purifier, fan), cleaning (robot vacuum). After seeing the first build, the owner asked for it to be more compact, so every device fits on one screen.
+**Device answered:** The owner checked it on the phone: looks good.
+**Conclusion:**
+- `DeviceKind` has a `category`, and `DeviceKind.byCategory` returns the groups in a fixed order, leaving out empty ones. Each device's registry entry sets its category. The kettle is under Kitchen, a default the owner didn't specify.
+- Tiles are now one row: icon, name and status side by side, 60 pt tall instead of 112, with 8 pt between them. Categories have small grey headers (`SectionTitle`, `TileGroup`). The Market status line is shorter ("5/7 working").
+**Next:** Merge into `main` and push when the owner says yes.
+Article note: the first grouped layout was correct but needed scrolling; the owner's real test was "can I see everything at once".

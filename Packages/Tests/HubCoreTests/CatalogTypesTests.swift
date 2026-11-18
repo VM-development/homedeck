@@ -16,7 +16,7 @@ final class CatalogTypesTests: XCTestCase {
             Feature(id: "b", title: "B", status: .planned),
             Feature(id: "c", title: "C", status: .planned),
         ])
-        XCTAssertEqual(kind.workingSummary, "1 of 3 features working")
+        XCTAssertEqual(kind.workingSummary, "1/3 working")
     }
 
     func testCardLineHidesTheOfflineReason() {
@@ -29,5 +29,16 @@ final class CatalogTypesTests: XCTestCase {
     func testUnbuiltDeviceStaysNotSetUp() {
         let device = UnbuiltDevice(name: "Fan")
         XCTAssertEqual(device.status, .notSetUp)
+    }
+
+    func testKindsGroupByCategoryInOrder() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".json")
+        try Data("[]".utf8).write(to: url)
+        func kind(_ id: String, _ category: DeviceCategory) -> DeviceKind {
+            DeviceKind(id: id, name: id, symbol: "questionmark", link: .wifi, category: category, featuresURL: url) { UnbuiltDevice(name: id) }
+        }
+        let groups = DeviceKind.byCategory([kind("fan", .climate), kind("pad", .fitness), kind("air", .climate)])
+        XCTAssertEqual(groups.map(\.category), [.fitness, .climate])
+        XCTAssertEqual(groups[1].kinds.map(\.id), ["fan", "air"])
     }
 }

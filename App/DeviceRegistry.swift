@@ -11,18 +11,25 @@ import AenoKit
 enum DeviceRegistry {
     static let kinds: [DeviceKind] = [
         DeviceKind(id: "walkingpad-c2", name: "WalkingPad C2", symbol: "figure.walk", link: .bluetooth,
+                   category: .fitness,
                    featuresURL: WalkingPadCatalog.featuresURL) { WalkingPadDevice() },
         DeviceKind(id: "mi-scale-s400", name: "Mi Body Composition Scale S400", symbol: "scalemass", link: .bluetooth,
+                   category: .fitness,
                    featuresURL: MiScaleCatalog.featuresURL) { MiScaleDevice() },
         DeviceKind(id: "philips-ac2729", name: "Philips 2000i AC2729", symbol: "humidifier", link: .wifi,
+                   category: .climate,
                    featuresURL: PhilipsAirCatalog.featuresURL) { PhilipsAirDevice() },
         DeviceKind(id: "zeppelin-pro", name: "Zeppelin Pro Edition", symbol: "hifispeaker", link: .wifi,
+                   category: .music,
                    featuresURL: ZeppelinCatalog.featuresURL) { ZeppelinDevice() },
         DeviceKind(id: "xiaomi-fan-2-pro", name: "Xiaomi Standing Fan 2 Pro", symbol: "fan.floor", link: .wifi,
+                   category: .climate,
                    featuresURL: XiaomiFanCatalog.featuresURL) { XiaomiFanDevice() },
         DeviceKind(id: "dreame-l40-ultra", name: "Dreame L40 Ultra", symbol: "circle.circle", link: .wifi,
+                   category: .cleaning,
                    featuresURL: DreameCatalog.featuresURL) { DreameDevice() },
         DeviceKind(id: "aeno-ek7s", name: "AENO EK7S Kettle", symbol: "cup.and.saucer", link: .bluetooth,
+                   category: .kitchen,
                    featuresURL: AenoCatalog.featuresURL) { UnbuiltDevice(name: "AENO EK7S Kettle") },
     ]
 }

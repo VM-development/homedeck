@@ -1,26 +1,28 @@
 import SwiftUI
 import HubCore
 
-/// Market tab: every device HomeDeck knows, as tiles with how much of it works.
+/// Market tab: every device HomeDeck knows, as tiles grouped by category, with how much of each works.
 struct MarketView: View {
     let store: DeviceStore
     let openDevice: (DeviceKind) -> Void
 
     var body: some View {
         GlassScreen {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 12)], spacing: 12) {
-                ForEach(store.kinds) { kind in
-                    NavigationLink {
-                        FeatureListView(kind: kind, store: store, openDevice: openDevice)
-                    } label: {
-                        DeviceTile(symbol: kind.symbol, name: kind.name,
-                                   line: "\(kind.link == .bluetooth ? "Bluetooth" : "Wi-Fi") · \(kind.workingSummary)",
-                                   reservesCorner: store.isAdded(kind))
-                    }
-                    .buttonStyle(.plain)
-                    .overlay(alignment: .topTrailing) {
-                        if store.isAdded(kind) {
-                            Image(systemName: "checkmark.circle.fill").foregroundStyle(.green).padding(20).accessibilityLabel("On Home")
+            ForEach(DeviceKind.byCategory(store.kinds), id: \.category) { group in
+                TileGroup(title: group.category.rawValue) {
+                    ForEach(group.kinds) { kind in
+                        NavigationLink {
+                            FeatureListView(kind: kind, store: store, openDevice: openDevice)
+                        } label: {
+                            DeviceTile(symbol: kind.symbol, name: kind.name,
+                                       line: "\(kind.link == .bluetooth ? "Bluetooth" : "Wi-Fi") · \(kind.workingSummary)",
+                                       reservesCorner: store.isAdded(kind))
+                        }
+                        .buttonStyle(.plain)
+                        .overlay(alignment: .trailing) {
+                            if store.isAdded(kind) {
+                                Image(systemName: "checkmark.circle.fill").foregroundStyle(.green).padding(.trailing, 14).accessibilityLabel("On Home")
+                            }
                         }
                     }
                 }
