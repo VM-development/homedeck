@@ -1,0 +1,15 @@
+{
+  "id": "aeno-ek7s",
+  "name": "AENO EK7S Kettle",
+  "symbol": "cup.and.saucer",
+  "link": "bluetooth",
+  "category": "kitchen",
+  "features": [
+    { "id": "boil", "title": "Start and stop boiling", "status": "planned" },
+    { "id": "target-temperature", "title": "Heat to a set temperature", "status": "planned" },
+    { "id": "current-temperature", "title": "Current water temperature", "status": "planned" },
+    { "id": "keep-warm", "title": "Keep warm and its duration", "status": "planned" },
+    { "id": "presets", "title": "Presets: tea, coffee, baby formula", "status": "planned" },
+    { "id": "status", "title": "Status: heating, done, off the base, no water", "status": "planned" }
+  ]
+}

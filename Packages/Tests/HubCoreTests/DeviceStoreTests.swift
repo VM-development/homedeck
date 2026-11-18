@@ -18,8 +18,7 @@ final class DeviceStoreTests: XCTestCase {
 
     func testAddedDeviceIsCreatedOnceAtLaunch() throws {
         var made = 0
-        let kind = DeviceKind(id: "fan", name: "Fan", symbol: "fan.floor", link: .wifi,
-                              featuresURL: try featuresFile([])) {
+        let kind = DeviceKind(id: "fan", name: "Fan", symbol: "fan.floor", link: .wifi) {
             made += 1
             return UnbuiltDevice(name: "Fan")
         }

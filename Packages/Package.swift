@@ -18,6 +18,6 @@ let package = Package(
         .testTarget(name: "ZeppelinKitTests", dependencies: ["ZeppelinKit"]),
         .testTarget(name: "PhilipsAirKitTests", dependencies: ["PhilipsAirKit"]),
         .testTarget(name: "XiaomiFanKitTests", dependencies: ["XiaomiFanKit"]),
-        .testTarget(name: "CatalogTests", dependencies: ["HubCore"] + kits.map { Target.Dependency.byName(name: $0) }),
-    ] + kits.map { Target.target(name: $0, resources: [.process("features.json")]) }
+        .testTarget(name: "CatalogTests", dependencies: ["HubCore"]),
+    ] + kits.map { Target.target(name: $0, resources: [.process("device.json")]) }
 )

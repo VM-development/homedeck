@@ -1,0 +1,16 @@
+{
+  "id": "zeppelin-pro",
+  "name": "Zeppelin Pro Edition",
+  "symbol": "hifispeaker",
+  "link": "wifi",
+  "category": "music",
+  "features": [
+    { "id": "playback", "title": "Play, pause and skip", "status": "working" },
+    { "id": "volume", "title": "Volume", "status": "working" },
+    { "id": "now-playing", "title": "Now playing and source", "status": "working" },
+    { "id": "eq", "title": "Bass and treble", "status": "working" },
+    { "id": "light", "title": "Light: on, brightness and colour", "status": "working" },
+    { "id": "power-settings", "title": "Auto standby", "status": "working" },
+    { "id": "firmware-update", "title": "Firmware version and update check", "status": "working" }
+  ]
+}

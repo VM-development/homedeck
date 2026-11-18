@@ -1,7 +1,0 @@
-[
-  { "id": "start-stop", "title": "Start and stop the belt", "status": "working" },
-  { "id": "speed", "title": "Set the speed", "status": "working" },
-  { "id": "mode", "title": "Mode: manual, automatic, standby", "status": "working" },
-  { "id": "live-stats", "title": "Live speed, distance, steps and time", "status": "working" },
-  { "id": "history", "title": "Workout history", "status": "working" }
-]

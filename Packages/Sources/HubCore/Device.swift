@@ -27,13 +27,10 @@ public protocol HomeDevice: AnyObject, Observable {
 }
 
 /// The group a device is listed under on Home and in Market, in this order.
-public enum DeviceCategory: String, CaseIterable, Sendable {
-    case fitness = "Fitness"
-    case music = "Music"
-    case climate = "Climate"
-    case cleaning = "Cleaning"
-    case kitchen = "Kitchen"
-    case other = "Other"
+public enum DeviceCategory: String, CaseIterable, Codable, Sendable {
+    case fitness, music, climate, cleaning, kitchen, other
+
+    public var title: String { rawValue.capitalized }
 }
 
 /// One catalog entry: what the Market shows and how to create the device.
@@ -46,15 +43,30 @@ public struct DeviceKind: Identifiable {
     public let features: [Feature]
     public let makeDevice: @MainActor () -> any HomeDevice
 
-    public init(id: String, name: String, symbol: String, link: Link, category: DeviceCategory = .other, featuresURL: URL,
+    public init(id: String, name: String, symbol: String, link: Link, category: DeviceCategory = .other, features: [Feature] = [],
                 makeDevice: @escaping @MainActor () -> any HomeDevice) {
         self.id = id
         self.name = name
         self.symbol = symbol
         self.link = link
         self.category = category
-        self.features = Feature.load(from: featuresURL)
+        self.features = features
         self.makeDevice = makeDevice
+    }
+
+    /// Reads a kit's device.json. A broken file is a build mistake, so it stops with the reason;
+    /// CatalogTests decodes every device.json, so this can't reach the phone.
+    public init(manifest url: URL, makeDevice: @escaping @MainActor () -> any HomeDevice) {
+        struct Manifest: Decodable {
+            let id, name, symbol: String
+            let link: Link
+            let category: DeviceCategory
+            let features: [Feature]
+        }
+        let m: Manifest
+        do { m = try JSONDecoder().decode(Manifest.self, from: Data(contentsOf: url)) }
+        catch { preconditionFailure("Can't read \(url.lastPathComponent): \(error)") }
+        self.init(id: m.id, name: m.name, symbol: m.symbol, link: m.link, category: m.category, features: m.features, makeDevice: makeDevice)
     }
 
     /// Kinds grouped by category, in the categories' order; empty categories are left out.

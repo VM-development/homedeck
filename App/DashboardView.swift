@@ -11,7 +11,7 @@ struct DashboardView: View {
                 ContentUnavailableView("No devices yet", systemImage: "square.grid.2x2", description: Text("Add them in Market."))
             }
             ForEach(DeviceKind.byCategory(store.added), id: \.category) { group in
-                TileGroup(title: group.category.rawValue) {
+                TileGroup(title: group.category.title) {
                     ForEach(group.kinds) { kind in
                         let device = store.device(for: kind)
                         let power = device as? PowerSwitchable

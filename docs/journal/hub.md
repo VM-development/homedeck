@@ -228,3 +228,28 @@ Article note: one approved mockup set the pattern for six screens, so the redesi
 - Tiles are now one row: icon, name and status side by side, 60 pt tall instead of 112, with 8 pt between them. Categories have small grey headers (`SectionTitle`, `TileGroup`). The Market status line is shorter ("5/7 working").
 **Next:** Merge into `main` and push when the owner says yes.
 Article note: the first grouped layout was correct but needed scrolling; the owner's real test was "can I see everything at once".
+
+## 2026-11-18: One device format, the hd.py tool, and a LinkedIn series
+
+**Tried:** The owner asked for a series of posts on how HomeDeck was made and for a tool to automate the work. The owner chose:
+- a tool that covers the phone test loop, asking for the vendor's .apk, and creating a new device's files;
+- one format for all devices;
+- one skill that holds everything;
+- nine LinkedIn posts, one per device plus an intro and a "how".
+The owner also asked about REA (`morluto/rea`), thinking it had reverse engineered the APKs. No session on this Mac ever called it: the APKs were read with `dexdump` and grep. REA is connected, but its APK decompiler needs a JADX bridge JAR that isn't set up. The owner kept `dexdump` and asked to mention REA honestly.
+**Device answered:**
+- `hd.py phone` built, installed and launched the app on the owner's iPhone.
+- `hd.py log walkingpad-c2` pulled the log and printed 21 masked lines.
+- `hd.py new` on a throwaway copy of the repo, with the kettle's .xapk as the sample app, created every file and dumped 11 dex files. On that copy the package tests passed and the simulator build passed. A second run was refused.
+**Conclusion:**
+- Each kit's `features.json` became `device.json`, which holds id, name, SF Symbol, link, category and features. The registry lines now only name the class to create.
+- `DeviceCategory` is `Codable` with lowercase values and a `title`.
+- `CatalogTests` reads every `device.json` from the source tree, so a new kit needs no test line.
+- `.claude/skills/add-device/hd.py` has three commands:
+  - `new`: creates the kit, tests, class, screen, Package and registry lines, and docs; with `--apk`, unpacks the app and runs `dexdump`;
+  - `phone`: builds, installs and launches on the iPhone;
+  - `log`: pulls the connection log and shows one device's lines, masked.
+- The skill and `docs/adding-a-device.md` use `hd.py` and `device.json`. The skill notes REA as an option once its JADX bridge is set up.
+- The nine posts are in `docs/posts/`, 255-341 words each.
+**Next:** The owner reviews the posts and checks that Home and Market look unchanged after the format switch, then commits.
+Article note: the owner remembered a reverse-engineering tool being used that never was; the transcripts, like the device logs, settled it.

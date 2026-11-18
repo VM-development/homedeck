@@ -3,11 +3,17 @@ import XCTest
 
 @MainActor
 final class CatalogTypesTests: XCTestCase {
-    func testFeatureListDecodesAllStatuses() throws {
-        let json = #"[{"id":"a","title":"A","status":"working"},{"id":"b","title":"B","status":"planned"}]"#
+    func testManifestDecodesEveryField() throws {
+        let json = #"{"id":"fan","name":"Fan","symbol":"fan.floor","link":"wifi","category":"climate","#
+            + #""features":[{"id":"a","title":"A","status":"working"},{"id":"b","title":"B","status":"planned"}]}"#
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".json")
         try Data(json.utf8).write(to: url)
-        XCTAssertEqual(Feature.load(from: url).map(\.status), [.working, .planned])
+        let kind = DeviceKind(manifest: url) { UnbuiltDevice(name: "Fan") }
+        XCTAssertEqual([kind.id, kind.name, kind.symbol], ["fan", "Fan", "fan.floor"])
+        XCTAssertEqual(kind.link, .wifi)
+        XCTAssertEqual(kind.category, .climate)
+        XCTAssertEqual(kind.category.title, "Climate")
+        XCTAssertEqual(kind.features.map(\.status), [.working, .planned])
     }
 
     func testWorkingSummaryCountsWorkingFeatures() throws {
@@ -32,10 +38,8 @@ final class CatalogTypesTests: XCTestCase {
     }
 
     func testKindsGroupByCategoryInOrder() throws {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".json")
-        try Data("[]".utf8).write(to: url)
         func kind(_ id: String, _ category: DeviceCategory) -> DeviceKind {
-            DeviceKind(id: id, name: id, symbol: "questionmark", link: .wifi, category: category, featuresURL: url) { UnbuiltDevice(name: id) }
+            DeviceKind(id: id, name: id, symbol: "questionmark", link: .wifi, category: category) { UnbuiltDevice(name: id) }
         }
         let groups = DeviceKind.byCategory([kind("fan", .climate), kind("pad", .fitness), kind("air", .climate)])
         XCTAssertEqual(groups.map(\.category), [.fitness, .climate])

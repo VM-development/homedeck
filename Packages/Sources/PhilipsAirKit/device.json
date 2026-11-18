@@ -1,0 +1,21 @@
+{
+  "id": "philips-ac2729",
+  "name": "Philips 2000i AC2729",
+  "symbol": "humidifier",
+  "link": "wifi",
+  "category": "climate",
+  "features": [
+    { "id": "power", "title": "Power on and off", "status": "working" },
+    { "id": "mode", "title": "Mode: auto, sleep, allergen, manual", "status": "working" },
+    { "id": "fan-speed", "title": "Fan speed", "status": "working" },
+    { "id": "humidifier", "title": "Purify only, or purify and humidify", "status": "working" },
+    { "id": "humidity-target", "title": "Target humidity", "status": "working" },
+    { "id": "air-quality", "title": "Air quality and PM2.5 readings", "status": "working" },
+    { "id": "humidity-reading", "title": "Humidity and temperature readings", "status": "working" },
+    { "id": "filter-status", "title": "Filter status", "status": "working" },
+    { "id": "water-level", "title": "Water level", "status": "working" },
+    { "id": "timer", "title": "Timer", "status": "working" },
+    { "id": "light", "title": "Display brightness", "status": "working" },
+    { "id": "child-lock", "title": "Child lock", "status": "working" }
+  ]
+}

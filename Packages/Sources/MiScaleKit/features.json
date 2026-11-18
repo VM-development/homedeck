@@ -1,8 +1,0 @@
-[
-  { "id": "weight", "title": "Weight", "status": "working" },
-  { "id": "body-composition", "title": "Body composition: fat, muscle, water, bone, BMI", "status": "working" },
-  { "id": "heart-rate", "title": "Heart rate", "status": "working" },
-  { "id": "profiles", "title": "User profiles", "status": "working" },
-  { "id": "history", "title": "History and trends", "status": "working" },
-  { "id": "apple-health", "title": "Save to Apple Health", "status": "working" }
-]

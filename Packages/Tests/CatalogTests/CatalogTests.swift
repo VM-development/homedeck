@@ -1,30 +1,20 @@
 import XCTest
 import HubCore
-import WalkingPadKit
-import MiScaleKit
-import PhilipsAirKit
-import ZeppelinKit
-import XiaomiFanKit
-import DreameKit
-import AenoKit
 
-/// Every device's features.json must decode, with unique ids, before it can reach the Market.
+/// Every kit's device.json must decode, with its folder's id unique and unique feature ids,
+/// before it can reach Home and the Market. Reads the files from the source tree, so a new kit needs no line here.
 final class CatalogTests: XCTestCase {
-    let lists: [String: URL] = [
-        "walkingpad-c2": WalkingPadCatalog.featuresURL,
-        "mi-scale-s400": MiScaleCatalog.featuresURL,
-        "philips-ac2729": PhilipsAirCatalog.featuresURL,
-        "zeppelin-pro": ZeppelinCatalog.featuresURL,
-        "xiaomi-fan-2-pro": XiaomiFanCatalog.featuresURL,
-        "dreame-l40-ultra": DreameCatalog.featuresURL,
-        "aeno-ek7s": AenoCatalog.featuresURL,
-    ]
-
-    func testEveryFeatureListDecodesWithUniqueIDs() {
-        for (device, url) in lists {
-            let features = Feature.load(from: url)
-            XCTAssertFalse(features.isEmpty, device)
-            XCTAssertEqual(Set(features.map(\.id)).count, features.count, "duplicate feature id in \(device)")
+    func testEveryDeviceJSONDecodesWithUniqueIDs() throws {
+        let sources = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../Sources").standardized
+        let manifests = try FileManager.default.contentsOfDirectory(at: sources, includingPropertiesForKeys: nil)
+            .map { $0.appendingPathComponent("device.json") }
+            .filter { FileManager.default.fileExists(atPath: $0.path) }
+        XCTAssertGreaterThanOrEqual(manifests.count, 7)
+        var ids = Set<String>()
+        for url in manifests {
+            let kind = DeviceKind(manifest: url) { UnbuiltDevice(name: "") }
+            XCTAssertTrue(ids.insert(kind.id).inserted, "duplicate device id \(kind.id)")
+            XCTAssertEqual(Set(kind.features.map(\.id)).count, kind.features.count, "duplicate feature id in \(kind.id)")
         }
     }
 }

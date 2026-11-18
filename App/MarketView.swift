@@ -9,7 +9,7 @@ struct MarketView: View {
     var body: some View {
         GlassScreen {
             ForEach(DeviceKind.byCategory(store.kinds), id: \.category) { group in
-                TileGroup(title: group.category.rawValue) {
+                TileGroup(title: group.category.title) {
                     ForEach(group.kinds) { kind in
                         NavigationLink {
                             FeatureListView(kind: kind, store: store, openDevice: openDevice)

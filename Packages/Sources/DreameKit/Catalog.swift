@@ -1,5 +1,6 @@
 import Foundation
 
 public enum DreameCatalog {
-    public static let featuresURL = Bundle.module.url(forResource: "features", withExtension: "json")!
+    /// This device's device.json: what Home and the Market show about it.
+    public static let manifest = Bundle.module.url(forResource: "device", withExtension: "json")!
 }
