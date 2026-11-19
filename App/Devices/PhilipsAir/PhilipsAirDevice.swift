@@ -107,7 +107,8 @@ final class PhilipsAirDevice: HomeDevice {
         observing = true
         // The reply to the registration is the first push; it took 3-10 s on device.
         if await request(CoAP.get, path: "/sys/dev/status", token: Self.observeToken, observe: true, wait: 20) == nil {
-            fail("The purifier answers but sends no status. Close Air+ on other phones and wait a minute.")
+            // Waiting doesn't clear this; unplugging did, during setup and again later (journal, 2026-11-19).
+            fail("The purifier answers but sends no status. Close Air+, then unplug the purifier for 10 seconds.")
         }
     }
 
@@ -118,7 +119,8 @@ final class PhilipsAirDevice: HomeDevice {
         guard let reply = await request(CoAP.post, path: "/sys/dev/sync", payload: Array(mine.utf8), wait: 5),
               let value = UInt32(String(decoding: reply.payload, as: UTF8.self), radix: 16) else {
             fail("No answer from the purifier at \(ip ?? "?"). The iPhone must be on the same Wi-Fi, the IP must be the "
-                 + "purifier's, and HomeDeck needs Local Network access (Settings > Privacy & Security > Local Network).")
+                 + "purifier's, and HomeDeck needs Local Network access (Settings > Privacy & Security > Local Network). "
+                 + "If Air+ still reaches it, unplug the purifier for 10 seconds: its local connection sometimes gets stuck.")
             return nil
         }
         return value

@@ -26,7 +26,7 @@ No real names, addresses, ids or keys: use placeholders such as `<ip>` or `<secr
 ## Status pushes
 
 - GET `/sys/dev/status` with Observe 0. The first push takes 2-10 s; after that the purifier pushes its whole state (about 40 keys) on every change and every few seconds while readings move, as NON messages with Max-Age 60 (**verified on device**).
-- **Subscriptions fill up.** After several subscriptions from different ports without cancelling, the purifier still answered sync but sent no status at all, even after 2 quiet minutes; unplugging it cleared that (**verified on device**). Re-subscribing from the same port with the same token, five times without cancelling, kept working (**verified on device**), so HomeDeck uses a fixed local port (56830) and token, and cancels with Observe 1 when the purifier is removed.
+- **Subscriptions fill up.** After several subscriptions from different ports without cancelling, the purifier still answered sync but sent no status at all, even after 2 quiet minutes; unplugging it cleared that (**verified on device**). Re-subscribing from the same port with the same token, five times without cancelling, kept working (**verified on device**), so HomeDeck uses a fixed local port (56830) and token, and cancels with Observe 1 when the purifier is removed. The purifier also got stuck after a day of use, first with no status and then not answering sync at all, while it kept its IP; unplugging cleared both (**verified on device**, 2026-11-19). The trigger isn't known.
 
 ## Commands (`{"state":{"desired":{"CommandType":"app","DeviceId":"","EnduserId":"", …}}}`)
 

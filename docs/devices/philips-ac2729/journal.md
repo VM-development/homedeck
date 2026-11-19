@@ -20,3 +20,14 @@ Entries are only ever appended; dead ends stay. No real names, addresses, ids or
 **Conclusion:** All twelve features work (verified on device). The secret lives in the git-ignored `Config/Secrets.xcconfig` (the owner's choice); the tests use a made-up one.
 **Next:** Hub review and merge. Open: the one unexplained burst of ignored commands.
 Article note: the hardest part wasn't the encryption, which matched the APK byte for byte. It was the purifier going quiet after a few test subscriptions it never forgot.
+
+## 2026-11-19: Lost after a day, back after unplugging
+
+**Tried:** The owner saw the purifier offline in HomeDeck while Air+ still controlled it, and suspected a new IP address. Read the phone's log; installed a build that searched the subnet again when the saved IP stopped answering; asked the owner to close Air+ and unplug the purifier for 10 s.
+**Device answered:**
+- The IP hadn't changed. Every failure in the log was at the saved IP, and after the new build the purifier answered sync there.
+- On 2026-11-18 HomeDeck logged "answers but sends no status" five times between 11:46 and 13:29 UTC, each time recovering within minutes. That was a day of many reinstalls from the Mac. From 13:37 sync went unanswered, with one good stretch at 15:48. On 2026-11-19 at 08:16 commands still went unanswered, while the Zeppelin on the same Wi-Fi worked. At 08:33 sync answered but no status came.
+- Two seconds after the owner unplugged it and plugged it back in, status came again, and child lock on and off both answered `success`.
+**Conclusion:** The purifier's local service can get stuck in two ways, no status or no answer at all, and only unplugging clears it. Air+ keeps working, probably through Philips' cloud (**guess**). The trigger isn't known. Candidates are subscriptions Air+ leaves behind and HomeDeck's own re-subscriptions after many reinstalls, both **guesses**. The subnet search was undone, since the IP never changed. The two offline messages now say to unplug the purifier, not to wait.
+**Next:** If it happens again, check whether Air+ had been opened shortly before, and whether the app had been reinstalled several times.
+Article note: the owner's guess, and the first fix, were a changed IP; the log said otherwise in one line.
